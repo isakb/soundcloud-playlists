@@ -1,26 +1,31 @@
 /**
- * Define an object containing all of the templates.
+ * Define an object containing all of the templates, precompiled.
+ *
+ * The templates must be compatible with Underscore.js' _.template().
  */
 define([
-    'text!src/templates/app.html',
-    'text!src/templates/player.html',
-    'text!src/templates/playlist.html',
-    'text!src/templates/track.html',
-    'text!src/templates/bookmarklet.html'
+    'underscore',
+    'text!./templates/app.html',
+    'text!./templates/player.html',
+    'text!./templates/playlist.html'
 ], function(
+    _,
     app,
     player,
-    playlist,
-    track,
-    bookmarklet
+    playlist
 ) {
     "use strict";
 
-    return {
+    var T = {};
+
+    _.each({
         app:            app,
         player:         player,
-        playlist:       playlist,
-        track:          track,
-        bookmarklet:    bookmarklet
-    };
+        playlist:       playlist
+
+    }, function(html, name) {
+        T[name] = _.template(html);
+    });
+
+    return T;
 });

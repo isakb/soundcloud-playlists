@@ -1,8 +1,29 @@
 <!-- Playlist template -->
-<div>
-  <h2 class="name"><%= name %></h2>
-  <p class="desc"><%= description %></p>
+<form>
+  <h2>Current playlist:</h2>
+  <label>
+    Name:
+    <input name="name" value="<%= name %>">
+  </label> (duration: <%= duration %>)
+
+  <label>
+    Description:
+    <textarea name="description"><%= description %></textarea>
+  </label>
+
+  <h3>Tracks:</h3>
+
   <ul class="tracks">
-    <%= tracks %>
+    <% _.each(tracks, function(track) { %>
+    <li data-sc-track="<%= track.id %>"><%= track.title %> (<%= track.duration %>)</li>
+    <% }); %>
+
+    <li>
+      <input name="new_track"
+        value=""
+        placeholder="Enter / paste URL of a Soundcloud track to add...">
+      <button>Add</button>
+    </li>
   </ul>
-</div>
+
+</form>
