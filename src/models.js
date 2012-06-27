@@ -68,12 +68,24 @@ function(_, $, Backbone, SC){
                 tracks = new Tracks(tracks);
                 this.set('tracks', tracks);
             }
-            tracks.bind('change', this.calculateDuration, this);
+            _.bindAll(this);
+
+            this.currentTrack = tracks.at(0);
+
+            tracks.bind('add', this.calculateDuration);
+            tracks.bind('remove', this.calculateDuration);
+            tracks.bind('change', this.calculateDuration);
         },
 
         calculateDuration: function() {
-            this.set('duration', this.get('tracks').reduce(function(sum, dur) {
-                return sum + dur;
+            var tracks = this.get('tracks');
+            if (!tracks) {
+                this.set('duration', 0);
+                return;
+            }
+            console.log('calculating duration of tracks', tracks.length);
+            this.set('duration', tracks.reduce(function(duration, track) {
+                return duration + track.get('duration');
             }, 0));
         },
 

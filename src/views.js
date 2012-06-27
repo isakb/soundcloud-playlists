@@ -1,5 +1,7 @@
-define(['underscore', 'jquery', 'backbone', 'sc_api', './models', './all_templates'],
-function(_, $, Backbone, SC_API, models, T){
+define(['underscore', 'jquery', 'backbone', 'sc_api',
+        './models', './all_templates', './template_helpers'],
+function(_, $, Backbone, SC_API,
+         models, T, templateHelpers){
     "use strict";
     var console = window.console,
         AppView,
@@ -11,7 +13,8 @@ function(_, $, Backbone, SC_API, models, T){
         template: T.playlist,
 
         events: {
-            'click li': 'onClickTrack'
+            'click .meta': 'onClickMeta',
+            'click tbody tr': 'onClickTrack'
         },
 
         initialize: function() {
@@ -19,6 +22,7 @@ function(_, $, Backbone, SC_API, models, T){
 
             _.bindAll(this);
 
+            this.options._isEditingMeta = false;
             this.model.bind('change', this.render);
             this.tracks.bind('add', this.render);
             this.tracks.bind('remove', this.render);
@@ -28,14 +32,25 @@ function(_, $, Backbone, SC_API, models, T){
 
         render: function() {
             console.log('Rendering playlist view');
-            this.$el.html(this.template(this.model.toJSON()));
+            this.$el.html(this.template(_.extend({},
+                this.options,
+                this.model.toJSON(),
+                templateHelpers
+            )));
             return this;
         },
 
+        // when user clicks on a track in the playlist
         onClickTrack: function(e) {
-            var id = $(e.target).data('scTrack');
+            var id = $(e.target).closest('tr').data('scTrack');
             console.log("clicked on a track: %d", id);
             this.trigger('tracks:clicked', this.tracks.get(id));
+        },
+
+        // when user clicks on the playlist title or description
+        onClickMeta: function(e) {
+            this.options._isEditingMeta = !this.options._isEditingMeta;
+            this.render();
         }
     });
 
@@ -45,10 +60,12 @@ function(_, $, Backbone, SC_API, models, T){
 
         initialize: function() {
             var widget;
+
             this.options = _.extend({
                 baseUrl: "http://w.soundcloud.com/player/?url=" +
-                    encodeURIComponent(this.options.startUrl)
-            });
+                    encodeURIComponent(this.options.startUrl) +
+                    '&' + $.param(this.options.widgetParams)
+            }, this.options);
             this.render();
             this.widgetIframe = this.$('iframe')[0];
             widget = SC_API.Widget(this.widgetIframe);
@@ -76,7 +93,7 @@ function(_, $, Backbone, SC_API, models, T){
             var widget = this.widget;
 
             console.log('Widget is loading track:', track);
-            widget.load(track.url());
+            widget.load(track.url(), this.options.widgetParams);
 
 
 
@@ -98,7 +115,19 @@ function(_, $, Backbone, SC_API, models, T){
                 model: this.playlist
             });
             this.player = new PlayerView({
-                startUrl: this.options.playerStartUrl
+                startUrl:       this.options.playerStartUrl,
+                widgetParams: {
+                    auto_play:      true,
+                    // buying:         true,
+                    // liking:         true,
+                    // download:       true,
+                    // sharing:        true,
+                    // show_artwork:   true,
+                    // show_comments:  true,
+                    // show_playcount: false,
+                    show_user:      true,
+                    start_track:    0
+                }
             });
 
             this.playlist.bind('tracks:clicked', this.player.playTrack, this.player);

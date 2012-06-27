@@ -58,7 +58,8 @@ function(_, $, models, views) {
     _.each([
         'http://soundcloud.com/isakba/mahadatest6',
         'http://soundcloud.com/isakba/bravissimo-2001',
-        'http://soundcloud.com/isakba/blip-blip-2001'
+        'http://soundcloud.com/isakba/blip-blip-2001',
+        'http://soundcloud.com/awooooo/09-the-16th-hour'
     ], _.bind(playlist.addTrackFromUrl, playlist));
 
     main = new views.AppView({

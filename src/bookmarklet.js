@@ -42,6 +42,8 @@
                     window.alert('Cannot do anything on this page.');
                     return;
                 }
+
+                this.findTracks();
             },
 
             findTracks: function() {
@@ -69,7 +71,6 @@
 
 
     me.init();
-    me.findTracks();
 
     console.log(me);
 
