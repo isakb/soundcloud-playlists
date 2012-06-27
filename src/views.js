@@ -1,5 +1,5 @@
 define(['underscore', 'jquery', 'backbone', 'sc_api', './models', './all_templates'],
-function(_, $, Backbone, SC, models, T){
+function(_, $, Backbone, SC_API, models, T){
     "use strict";
     var console = window.console,
         AppView,
@@ -22,6 +22,8 @@ function(_, $, Backbone, SC, models, T){
             this.model.bind('change', this.render);
             this.tracks.bind('add', this.render);
             this.tracks.bind('remove', this.render);
+
+            this.render();
         },
 
         render: function() {
@@ -45,11 +47,11 @@ function(_, $, Backbone, SC, models, T){
             var widget;
             this.options = _.extend({
                 baseUrl: "http://w.soundcloud.com/player/?url=" +
-                    encodeURIComponent(this.options.firstTrack)
+                    encodeURIComponent(this.options.startUrl)
             });
             this.render();
             this.widgetIframe = this.$('iframe')[0];
-            widget = SC.Widget(this.widgetIframe);
+            widget = SC_API.Widget(this.widgetIframe);
 
             // widget.bind(SC.Widget.Events.READY, function() {
             //     console.log('widget ready event');
@@ -92,10 +94,12 @@ function(_, $, Backbone, SC, models, T){
             this.playlist = this.options.playlist;
 
             // Create the components:
-            this.playlist = new PlaylistView({ model: this.playlist });
-            this.player = new PlayerView();
-
-            this._renderComponents();
+            this.playlist = new PlaylistView({
+                model: this.playlist
+            });
+            this.player = new PlayerView({
+                startUrl: this.options.playerStartUrl
+            });
 
             this.playlist.bind('tracks:clicked', this.player.playTrack, this.player);
         },
@@ -103,11 +107,6 @@ function(_, $, Backbone, SC, models, T){
         render: function() {
             this.$el.html(this.template(this.options));
             return this;
-        },
-
-        _renderComponents: function() {
-            this.playlist.render();
-            this.player.render();
         }
 
     });

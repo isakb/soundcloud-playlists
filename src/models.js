@@ -1,5 +1,5 @@
-define(['underscore', 'jquery', 'backbone'],
-function(_, $, Backbone){
+define(['underscore', 'jquery', 'backbone', './sc_client'],
+function(_, $, Backbone, SC){
     "use strict";
     var Track, Tracks, Playlist, Playlists;
 
@@ -11,13 +11,19 @@ function(_, $, Backbone){
     Track = Backbone.Model.extend({
         urlRoot: location.protocol + '//api.soundcloud.com/tracks/',
 
+        // These are the attributes we are interested in, although a soundcloud
+        // track has even more attributes.
         defaults: {
-            id: 0,
-            title: 'Unknown track',
-            duration: 0
-        },
+            artwork_url: null,
+            duration: 0,            // duration in milliseconds
+            id: 0,                  // e.g. 14426514
+            permalink_url: "",      // e.g. http://s..com/isakba/bravissimo-2001
+            title: "",              // e.g. Bravissimo 2001
+            uri: "",                // e.g. http://api.s..com/tracks/14426514
+            user_id: null,          // e.g. 4446361
+            user_name: ''           // e.g. isak-ba
+        }
 
-        initialize: function() {}
     });
 
 
@@ -52,7 +58,7 @@ function(_, $, Backbone){
         defaults: {
             name: 'New playlist',
             description: '',
-            duration: 0,
+            duration: 0, // total playlist duration in milliseconds
             tracks: []
         },
 
@@ -89,39 +95,18 @@ function(_, $, Backbone){
          * @param {String} url
          */
         addTrackFromUrl: function(url) {
-            var that = this;
+            var tracks = this.get('tracks');
+            SC.get('/resolve', { url: url }, function(track) {
+                if (track.kind === 'track') {
+                    // We don't use deep models in this project.
+                    track.user_name = track.user.username;
+                    delete track.user;
 
-            url += '/properties';
-
-            // There doesn't seem to be any JSONP or CORS support at these
-            // soundcloud resources (at least not when running from localhost),
-            // so let's make a workaround, using YQL as a proxy (since I am
-            // not planning to make my own backend for this project).
-            url = "http://query.yahooapis.com/v1/public/yql?"+
-                "q=select%20*%20from%20html%20where%20url%3D%22"+
-                encodeURIComponent(url)+ "%22&format=json";
-
-            $.ajax({
-                dataType: 'jsonp',
-                url: url
-            })
-            .done(function(result) {
-                var json, trackDetails;
-
-                try {
-                    json = result.query.results.body.p;
-                    trackDetails = JSON.parse(json);
-                } catch(e) {
-                    // FIXME: indicate error
-                    console.error('Could not find track properties.', e);
-                    return;
+                    tracks.add(track);
+                } else {
+                    throw new Error('You can only add tracks to a playlist');
                 }
 
-                that.get('tracks').add(trackDetails);
-            })
-            .fail(function() {
-                // FIXME: indicate error
-                console.error('YQL request failed');
             });
         }
 

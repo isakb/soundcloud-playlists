@@ -13,6 +13,7 @@ requirejs.config({
         'underscore': 'vendor/underscore',
         'jquery':     'vendor/jquery',
         'backbone':   'vendor/backbone',
+        'sc_sdk':     'http://connect.soundcloud.com/sdk',
         'sc_api':     'vendor/sc_api',
         // RequireJS text plugin, used to load templates:
         'text':       'vendor/require.text'
@@ -23,13 +24,23 @@ requirejs.config({
             exports: 'Backbone'
         },
         'underscore': {
-            exports: function (bar) {
+            exports: function () {
                 return this._.noConflict();
+            }
+        },
+        // Soundcloud SDK:
+        'sc_sdk': {
+            exports: function () {
+                return this.SC;
             }
         },
         // Soundcloud API:
         'sc_api': {
-            exports: 'SC'
+            exports: function () {
+                var SC = this.SC;
+                this.SC = undefined;
+                return SC;
+            }
         }
     }
 });
@@ -38,20 +49,7 @@ requirejs(['underscore', 'jquery', './models', './views'],
 function(_, $, models, views) {
     var playlist,
         main;
-        // widgetIframe  = document.getElementById('sc-widget'),
-        // playerBaseUrl = widgetIframe.src + '?url=',
-        // widget        = SC.Widget(widgetIframe),
-        // nextTrackUrl = 'http://api.soundcloud.com/tracks/13692671';
 
-    // playlist = new models.Playlist();
-
-    // // Add some dummy tracks to playlist
-
-    // playlistView = new views.PlaylistView({
-    //     model: playlist
-    // });
-
-    // playlistView.render();
 
     playlist = new models.Playlist({
         name: 'Dummy playlist',
@@ -65,6 +63,7 @@ function(_, $, models, views) {
 
     main = new views.AppView({
         playlist: playlist,
+        playerStartUrl: 'http://api.soundcloud.com/users/isakba',
         bookmarkletUrl: window.location.href.replace('index.html', 'src/bookmarklet.js')
     });
 
