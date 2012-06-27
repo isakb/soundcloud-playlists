@@ -59,16 +59,21 @@ function(_, $, Backbone, SC_API,
 
                 return;
             } else {
-                this.model.addTrackFromUrl(url);
+                this.model.addTrackFromUrl(url)
+                .done(function(track){
+                    console.log('Added track: %s to playlist', track.get('title'));
+                })
+                .fail(function(error) {
+                    window.alert('Could not add that URL. ' + error.message);
+                });
             }
             this.render();
         },
 
         // when user clicks on a track in the playlist
         onClickTrack: function(e) {
-            var id = $(e.target).closest('tr').data('scTrack');
-            console.log("clicked on a track: %d", id);
-            this.trigger('tracks:clicked', this.tracks.get(id));
+            var id = $(e.target).closest('tr').data('trackIndex');
+            this.trigger('tracks:clicked', this.tracks.at(id));
         },
 
         // when user cancels editing details
@@ -91,8 +96,8 @@ function(_, $, Backbone, SC_API,
 
             delete this.overrideTemplate;
 
-            name = this.$('form [name=name]').val() || 'no-name';
-            description = this.$('form [name=description]').val()
+            name = this.$('form [name=name]').val() || 'unnamed';
+            description = this.$('form [name=description]').val();
 
             // Since I'm using a very lightweight templating library
             // I will have to take care of escaping HTML myself:
@@ -146,7 +151,7 @@ function(_, $, Backbone, SC_API,
             var widget = this.widget;
 
             console.log('Widget is loading track:', track);
-            widget.load(track.url(), this.options.widgetParams);
+            widget.load(track.get('uri'), this.options.widgetParams);
 
 
 

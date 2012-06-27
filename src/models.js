@@ -16,7 +16,7 @@ function(_, $, Backbone, SC){
         defaults: {
             artwork_url: null,
             duration: 0,            // duration in milliseconds
-            id: 0,                  // e.g. 14426514
+            sc_id: 0,               // e.g. 14426514
             permalink_url: "",      // e.g. http://s..com/isakba/bravissimo-2001
             title: "",              // e.g. Bravissimo 2001
             uri: "",                // e.g. http://api.s..com/tracks/14426514
@@ -36,10 +36,7 @@ function(_, $, Backbone, SC){
      * @type {Backbone.Collection}
      */
     Tracks = Backbone.Collection.extend({
-        model: Track,
-
-        initialize: function() {
-        }
+        model: Track
     });
 
     /**
@@ -107,19 +104,34 @@ function(_, $, Backbone, SC){
          * @param {String} url
          */
         addTrackFromUrl: function(url) {
-            var tracks = this.get('tracks');
-            SC.get('/resolve', { url: url }, function(track) {
+            var tracks = this.get('tracks'),
+                dfd = $.Deferred();
+
+            SC.get('/resolve', { url: url }, function(track, error) {
+                if (error) {
+                    dfd.reject(error);
+                }
                 if (track.kind === 'track') {
                     // We don't use deep models in this project.
                     track.user_name = track.user.username;
                     delete track.user;
+                    // If we keep the id field we can only have a track once per
+                    // playlist, which is not so good. So let's rename it.
+                    track.sc_id = track.id;
+                    delete track.id;
 
+                    track = new Track(track);
                     tracks.add(track);
+                    dfd.resolve(track);
                 } else {
-                    throw new Error('You can only add tracks to a playlist');
+                    dfd.reject({
+                        message: "This URL does not go to a soundcloud track."
+                    });
                 }
 
             });
+
+            return dfd.promise();
         }
 
     });

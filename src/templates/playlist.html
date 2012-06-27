@@ -10,16 +10,17 @@
     <tr>
       <th>User</th>
       <th>Track</th>
-      <th>Length</th>
+      <th colspan="2">Length</th>
     </tr>
   </thead>
 
   <tbody>
-  <% _.each(tracks, function(track) { %>
-  <tr data-sc-track="<%= track.id %>">
+  <% _.each(tracks, function(track, index) { %>
+  <tr data-track-index="<%= index %>">
     <td><%= track.user_name %></td>
     <td><%= track.title %></td>
     <td><%= formatDuration(track.duration) %></td>
+    <td class="actions"><button title="Delete">x</button></td>
   </tr>
   <% }); %>
   </tbody>
@@ -29,7 +30,7 @@
       <td colspan="2">
         Number of tracks: <%= tracks.length %>
       </td>
-      <td>
+      <td colspan="2">
         <%= formatDuration(duration) %>
       </td>
     </tr>
