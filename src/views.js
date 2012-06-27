@@ -15,7 +15,8 @@ function(_, $, Backbone, SC_API,
         events: {
             'click .meta':              'onClickMeta',
             'click tbody tr':           'onClickTrack',
-            'click a.abort':            'onClickAbort',
+            'click .abort':             'onClickAbort',
+            'click .delete':            'onClickDeleteTrack',
             'submit form.edit-meta':    'onEditPlaylist',
             'submit form.add-track':    'onAddTrack'
         },
@@ -72,9 +73,23 @@ function(_, $, Backbone, SC_API,
 
         // when user clicks on a track in the playlist
         onClickTrack: function(e) {
-            var id = $(e.target).closest('tr').data('trackIndex');
-            this.trigger('tracks:clicked', this.tracks.at(id));
+            var i = $(e.target).closest('tr').data('trackIndex');
+            this.trigger('tracks:clicked', this.tracks.at(i));
         },
+
+        // when user clicks on the playlist title or description
+        onClickDeleteTrack: function(e) {
+            var i, track;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            i = $(e.target).closest('tr').data('trackIndex');
+            track = this.tracks.at(i);
+
+            this.tracks.remove(track);
+        },
+
 
         // when user cancels editing details
         onClickAbort: function(e) {
@@ -107,8 +122,6 @@ function(_, $, Backbone, SC_API,
             this.model.set('description', description);
             this.model.set('name', name);
             this.model.save();
-
-            this.render();
         }
     });
 

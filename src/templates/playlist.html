@@ -8,26 +8,35 @@
 <table class="tracks">
   <thead>
     <tr>
-      <th>User</th>
+      <th><!-- picture column --></th>
       <th>Track</th>
-      <th colspan="2">Length</th>
+      <th>User</th>
+      <th>Length</th>
+      <th><!-- actions column --></th>
     </tr>
   </thead>
 
   <tbody>
   <% _.each(tracks, function(track, index) { %>
   <tr data-track-index="<%= index %>">
-    <td><%= track.user_name %></td>
+    <td class="pic">
+      <% if (track.artwork_url) { %>
+        <img class="small" title="Play" src="<%= track.artwork_url %>" alt="" />
+      <% } else { %>
+        ► <!-- placeholder for a Play icon. -->
+      <% } %>
+    </td>
     <td><%= track.title %></td>
+    <td><%= track.user_name %></td>
     <td><%= formatDuration(track.duration) %></td>
-    <td class="actions"><button title="Delete">x</button></td>
+    <td class="actions"><span class="small css3button delete" title="Delete">x</span></td>
   </tr>
   <% }); %>
   </tbody>
 
   <tfoot>
     <tr>
-      <td colspan="2">
+      <td colspan="3">
         Number of tracks: <%= tracks.length %>
       </td>
       <td colspan="2">
@@ -45,7 +54,7 @@
            title="Enter a URL of a track and press ENTER"
            placeholder="http://soundcloud.com/author/song">
 
-    <button class="css3">Add to playlist</button>
+    <button class="css3button">Add to playlist</button>
   </div>
 
 </form>
