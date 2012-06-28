@@ -15,6 +15,7 @@
 
     modules: [{
         name: 'main',
+        include: 'requireLib',
         exclude : [
             //"jquery"
         ]
@@ -32,7 +33,7 @@
         beautify: false
     },
 
-    optimizeCss: "standard.keepLines"
+    optimizeCss: "standard"
 
     // // Include 'use strict' in all files
     // useStrict: true

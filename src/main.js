@@ -23,7 +23,10 @@ require.config({
         'sc_api':       'vendor/sc_api',
 
         // RequireJS text plugin, used to load templates:
-        'text':         'vendor/require.text'
+        'text':         'vendor/require.text',
+
+        // For the build process:
+        'requireLib':   'vendor/require'
     },
     // Relevant RequireJS 2.0 documentation: http://tinyurl.com/bn4j9sx
     shim: {

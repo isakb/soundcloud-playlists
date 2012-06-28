@@ -27,7 +27,7 @@ task("deps", function() {
  */
 desc('Run unit tests in phantomjs (assuming that you have started the server)');
 task('test', [], function() {
-    jake.exec(["./vendor/qutest/run http://localhost:8888/test.html"], function() {}, {
+    jake.exec(["./vendor/qutest/run http://localhost:8888/test.html " + process.argv.slice(3)], function() {}, {
         stdout: true,
         stderr: true
     });
@@ -60,10 +60,12 @@ task('server', function() {
 /**
  * Building + optimizing code using r.js.
  */
-desc('Optimize code using r.js');
-task('build', ['build:clean'], function() {
-    jake.exec(["node node_modules/requirejs/bin/r.js -o bin/build.js"], function() {}, {
-        stdout: false,
+desc('Build optimized code using r.js');
+task('build', ['clean'], function() {
+    console.log('Building optimized code');
+    jake.exec(["node node_modules/requirejs/bin/r.js -o bin/build.js",
+                "mv build/index_prod.html build/index.html"], function() {}, {
+        stdout: true,
         stderr: true,
         breakOnError: true
     }, function() {
@@ -74,10 +76,9 @@ task('build', ['build:clean'], function() {
 /**
  * Clean build.
  */
-namespace('build', function() {
-    desc("Clean build directory");
-    task('clean', [], function() {
-        console.log("- Removing './build' directory");
-        jake.exec(["rm -rf ./build"]);
-    });
+desc("Clean build directory");
+task('clean', [], function() {
+    console.log("- Removing './build' directory");
+    jake.exec(["rm -rf ./build/"]);
 });
+
