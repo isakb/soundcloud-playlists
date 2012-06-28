@@ -2,7 +2,7 @@
  * Install deps, build and test.
  */
 desc('Default task - install deps, build and test.');
-task("default", ['deps', 'build:clean', 'build', 'server', 'test'], function() {
+task("default", ['deps', 'build', 'server', 'test'], function() {
     console.log('OK');
 });
 
@@ -82,3 +82,13 @@ task('clean', [], function() {
     jake.exec(["rm -rf ./build/"]);
 });
 
+/**
+ * Deploy relevant build files to the cloud
+ */
+desc('Deploy to cloud file hosting');
+task("deploy", function() {
+    jake.exec(['node bin/deploy.js'], function() {}, {
+        stdout: true,
+        stderr: true
+    });
+});

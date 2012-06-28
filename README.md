@@ -1,7 +1,10 @@
 Soundcloud Playlists
 ====================
 
-A fully client-based web app that allows you to create playlists of ANY tracks on SoundCloud.
+A fully client-based web app that allows you to create playlists of ANY tracks
+on SoundCloud.
+
+Temporary Demo at: http://c1299476.r76.cf3.rackcdn.com/index.html
 
 Features
 ========
@@ -15,11 +18,16 @@ Features
 Dependencies
 ============
 
-You should be able to simply open the index.html file and use the app like that. (Preferably serve it with a web server.) However you need node.js and npm to build and deploy the project.
+You should in theory be able to simply open the index.html file and use the app
+like that (except for problems that occur when using the file: protocol).
 
-Typing `npm install` from a Bash prompt should take care of everything.
+In order to get the dependencies need for development, you need ot have node.js
+installed, as well as npm, and `npm install -g jake`.
 
-Typing `node deploy.js` should deploy the project into the cloud.
+Then you only have to run `jake deps` in order to get everything you need.
+
+Typing `jake -T` will list the tasks available.
+Typing `jake deploy` should deploy the project into the cloud.
 
 
 Tech used
@@ -38,6 +46,7 @@ TODO
 ====
 
 - Make it possible to undo actions.
+- Make more unit tests.
 
 
 Known issues
@@ -45,6 +54,5 @@ Known issues
 
 - The Soundcloud Widget does not work in Chromium, see:
 https://getsatisfaction.com/soundcloud/topics/soundcloud_widget_wont_play_in_chrome_help
-
-
+- There are very few unit tests.
 

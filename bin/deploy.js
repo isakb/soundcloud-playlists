@@ -10,7 +10,7 @@ var fs = require('fs'),
     _ = require('underscore'),
     cloudfiles = require('cloudfiles'),
     DIR = __dirname,
-    MANIFEST = fs.readFileSync('./cache.manifest', 'utf8'),
+    MANIFEST = fs.readFileSync(DIR + '/../src/cache.manifest', 'utf8'),
     FILES = MANIFEST.split('\n').slice(1, -1),
     config,
     json,
@@ -19,7 +19,7 @@ var fs = require('fs'),
     doneCallback;
 
 try {
-    json = fs.readFileSync('./.rackspace-config.json', 'utf8');
+    json = fs.readFileSync(DIR + '/../.rackspace-config.json', 'utf8');
     config = JSON.parse(json);
 } catch (e) {
     console.error('Please check your config file:');
@@ -42,7 +42,7 @@ client.setAuth(function() {
     _.each(FILES, function(file) {
         client.addFile(container, {
             remote: file,
-            local: DIR + '/' + file
+            local: DIR + '/../build/' + file
         }, function (err, uploaded) {
             if (err) {
                 console.error('ERROR:', err);
