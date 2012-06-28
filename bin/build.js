@@ -11,7 +11,7 @@
 
     dir: '../build',
 
-    //mainConfigFile: '../src/config.js',
+    mainConfigFile: '../src/main.js',
 
     modules: [{
         name: 'main',
