@@ -1,0 +1,17 @@
+<!-- Playlists template -->
+
+<h2>Playlists</h2>
+
+<div class="new-playlist">New playlist</div>
+
+<ul>
+  <% _.each(playlists, function(playlist) { %>
+    <li class="active">Test active </li>
+    <li data-playlist-id="<%= playlist.id %>" title="<%- playlist.description %>">
+      <%= playlist.name %>
+    </li>
+  <% }); %>
+</ul>
+
+
+

@@ -53,7 +53,7 @@ function(_, $, Backbone, SC){
          * @property {Tracks} tracks       The tracks included in the playlist
          */
         defaults: {
-            name: 'New playlist',
+            name: 'My New Playlist',
             description: '',
             duration: 0, // total playlist duration in milliseconds
             tracks: []

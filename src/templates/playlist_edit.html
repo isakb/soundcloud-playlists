@@ -2,16 +2,18 @@
 <form class="edit-meta">
 
   <div class="meta-edit">
-    <h3>Playlist details</h3>
 
     <label>
       Name
-      <input name="name" title="Playlist name" value="<%= name %>">
+      <input name="name" title="Playlist name"
+             placeholder="Give your playlist a good name"
+             value="<%= name %>">
     </label>
 
     <label>
       Description
-      <textarea name="description" title="Description"><%= description %></textarea>
+      <textarea name="description" title="Description"
+                placeholder="Enter a description of your playlist (optional)"><%= description %></textarea>
     </label>
 
     <a class="abort" href="javascript:void(0)">Cancel</a>

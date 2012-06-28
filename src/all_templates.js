@@ -8,13 +8,15 @@ define([
     'text!./templates/app.html',
     'text!./templates/player.html',
     'text!./templates/playlist.html',
-    'text!./templates/playlist_edit.html'
+    'text!./templates/playlist_edit.html',
+    'text!./templates/playlists.html'
 ], function(
     _,
     app,
     player,
     playlist,
-    playlist_edit
+    playlist_edit,
+    playlists
 ) {
     "use strict";
 
@@ -24,7 +26,8 @@ define([
         app:            app,
         player:         player,
         playlist:       playlist,
-        playlist_edit:  playlist_edit
+        playlist_edit:  playlist_edit,
+        playlists:      playlists
 
     }, function(html, name) {
         T[name] = _.template(html);

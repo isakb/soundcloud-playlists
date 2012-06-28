@@ -1,13 +1,48 @@
+/**
+ * NB: Using SC Widget API here, not SC JS SDK.
+ */
 define(['underscore', 'jquery', 'backbone', 'sc_api',
         './models', './all_templates', './template_helpers'],
-function(_, $, Backbone, SC_API,
+function(_, $, Backbone, SC,
          models, T, templateHelpers){
     "use strict";
     var console = window.console,
         AppView,
         PlaylistView,
+        PlaylistsView,
         PlayerView;
 
+    /**
+     * All of the user's playlists.
+     */
+    PlaylistsView = Backbone.View.extend({
+        el: '#playlists',
+        template: T.playlists,
+
+        initialize: function() {
+            if (this.collection.size() === 0) {
+                this.collection.add(new models.Playlist());
+            }
+            this.activePlaylist = this.collection.at(0);
+            this.render();
+        },
+
+        getActivePlaylist: function() {
+            return this.activePlaylist;
+        },
+
+        render: function() {
+            this.$el.html(this.template({
+                playlists: this.collection.toJSON(),
+                activePlaylist: this.activePlaylist
+            }));
+            return this;
+        }
+    });
+
+    /**
+     * The active playlist.
+     */
     PlaylistView = Backbone.View.extend({
         el: '#playlist',
         template: T.playlist,
@@ -22,6 +57,9 @@ function(_, $, Backbone, SC_API,
         },
 
         initialize: function() {
+            if (!this.model) {
+                this.model = new models.Playlist();
+            }
             this.tracks = this.model.get('tracks');
 
             _.bindAll(this);
@@ -97,10 +135,12 @@ function(_, $, Backbone, SC_API,
             this.render();
         },
 
+
         // when user clicks on the playlist title or description
         onClickMeta: function(e) {
             this.overrideTemplate = T.playlist_edit;
             this.render();
+            this.$('form [name=name]').select();
         },
 
         // when user is editing details of playlist and submits the form
@@ -125,29 +165,38 @@ function(_, $, Backbone, SC_API,
         }
     });
 
+
+    /**
+     * The Soundcloud Widget (track player).
+     */
     PlayerView = Backbone.View.extend({
         el: '#sc-player',
         template: T.player,
 
         initialize: function() {
-            var widget;
+            var widget,
+                that = this;
 
             this.options = _.extend({
                 baseUrl: "http://w.soundcloud.com/player/?url=" +
                     encodeURIComponent(this.options.startUrl) +
                     '&' + $.param(this.options.widgetParams)
             }, this.options);
-            this.render();
-            this.widgetIframe = this.$('iframe')[0];
-            widget = SC_API.Widget(this.widgetIframe);
 
-            // widget.bind(SC.Widget.Events.READY, function() {
-            //     console.log('widget ready event');
-            //     widget.bind(SC.Widget.Events.FINISH, function() {
-            //         console.log('widget finish event');
-            //         widget.load(nextTrackUrl);
-            //     });
-            // });
+            this.render();
+
+            this.widgetIframe = this.$('iframe')[0];
+            widget = SC.Widget(this.widgetIframe);
+
+            widget.bind(SC.Widget.Events.READY, function() {
+                console.log('widget ready event');
+                that.trigger('widget:ready');
+                widget.bind(SC.Widget.Events.FINISH, function() {
+                    console.log('widget finish event');
+                    that.trigger('widget:finish');
+                    // widget.load(nextTrackUrl);
+                });
+            });
             this.widget = widget;
         },
 
@@ -165,9 +214,6 @@ function(_, $, Backbone, SC_API,
 
             console.log('Widget is loading track:', track);
             widget.load(track.get('uri'), this.options.widgetParams);
-
-
-
         }
     });
 
@@ -179,12 +225,16 @@ function(_, $, Backbone, SC_API,
             // First render, so the components have elements.
             this.render();
 
-            this.playlist = this.options.playlist;
+            this.playlists = new models.Playlists();
 
             // Create the components:
-            this.playlist = new PlaylistView({
-                model: this.playlist
+            this.playlists = new PlaylistsView({
+                collection: this.playlists
             });
+            this.playlist = new PlaylistView({
+                model: this.playlists.getActivePlaylist()
+            });
+
             this.player = new PlayerView({
                 startUrl:       this.options.playerStartUrl,
                 widgetParams: {
