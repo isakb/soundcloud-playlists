@@ -1,55 +1,55 @@
 /**
  * Soundcloud Playlist application.
  *
- * RequireJS (http://requirejs.org/) is used for dependency management.
+ * https://github.com/isakb/...
+ *
+ * Copyright (c) 2012 Isak B
+ * GPL Licensed (LICENSE.txt)
  */
-(function(){
-'use strict';
-/*global requirejs*/
 
-// Configure requirejs module paths etc:
-requirejs.config({
+// Configure module paths etc. for RequireJS:
+require.config({
     paths: {
-        'underscore': 'vendor/underscore',
-        'jquery':     'vendor/jquery',
-        'backbone':   'vendor/backbone',
-        'sc_sdk':     'http://connect.soundcloud.com/sdk',
-        'sc_api':     'vendor/sc_api',
+        // Backbone and its dependencies:
+        'underscore':   'vendor/underscore',
+        'jquery':       'vendor/jquery',
+        'backbone':     'vendor/backbone',
+
+        // Local storage of backbone models:
+        'localstorage': 'vendor/backbone_localstorage',
+
+        // Soundcloud JavaScript SDK and Widget API:
+        'sc_sdk':       'http://connect.soundcloud.com/sdk',
+        'sc_api':       'vendor/sc_api',
+
         // RequireJS text plugin, used to load templates:
-        'text':       'vendor/require.text'
+        'text':         'vendor/require.text'
     },
+    // Relevant RequireJS 2.0 documentation: http://tinyurl.com/bn4j9sx
     shim: {
         'backbone': {
             deps: ['underscore', 'jquery'],
             exports: 'Backbone'
         },
         'underscore': {
-            exports: function () {
-                return this._.noConflict();
-            }
+            exports: '_'
         },
-        // Soundcloud SDK:
+        'localstorage': {
+            deps: ['underscore', 'backbone'],
+            exports: 'Store'
+        },
         'sc_sdk': {
-            exports: function () {
-                return this.SC;
-            }
+            exports: 'SC'
         },
-        // Soundcloud API:
         'sc_api': {
-            exports: function () {
-                var SC = this.SC;
-                this.SC = undefined;
-                return SC;
-            }
+            exports: 'SC'
         }
     }
 });
 // MAIN dependencies and definition:
-requirejs(['underscore', 'jquery', './models', './views'],
+require(['underscore', 'jquery', './models', './views'],
 function(_, $, models, views) {
-    var playlist,
-        main;
-
+"use strict";
 
     // playlist = new models.Playlist({
     //     name: 'Dummy playlist',
@@ -62,7 +62,7 @@ function(_, $, models, views) {
     //     'http://soundcloud.com/awooooo/09-the-16th-hour'
     // ], _.bind(playlist.addTrackFromUrl, playlist));
 
-    main = new views.AppView({
+    return new views.AppView({
         //playlist: playlist,
         playerStartUrl: 'http://api.soundcloud.com/users/isakba',
         bookmarkletUrl: window.location.href.replace('index.html', 'src/bookmarklet.js')
@@ -70,5 +70,3 @@ function(_, $, models, views) {
 
 
 });
-
-})();

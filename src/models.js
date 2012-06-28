@@ -1,5 +1,5 @@
-define(['underscore', 'jquery', 'backbone', './sc_client'],
-function(_, $, Backbone, SC){
+define(['underscore', 'jquery', 'backbone', 'localstorage', './sc_client'],
+function(_, $, Backbone, Store, SC){
     "use strict";
     var Track, Tracks, Playlist, Playlists;
 
@@ -88,7 +88,10 @@ function(_, $, Backbone, SC){
 
         toJSON: function() {
             var json = Playlist.__super__.toJSON.call(this);
-            json.tracks = this.get('tracks').toJSON();
+            json.tracks = this.get('tracks');
+            if (_.isObject(json.tracks)) {
+                json.tracks = json.tracks.toJSON();
+            }
             return json;
         },
 
@@ -138,7 +141,10 @@ function(_, $, Backbone, SC){
 
     // TODO:
     Playlists = Backbone.Collection.extend({
-        model: Playlist
+        model: Playlist,
+
+        // Save all playlists in local store under this namespace:
+        localStorage: new Store("my-soundcloud-playlists"),
     });
 
     return {
