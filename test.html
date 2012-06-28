@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Quick Unit Test Runner</title>
+    <link rel="stylesheet" href="vendor/qutest/lib/qunit.css">
+  </head>
+  <body>
+    <h1 id="qunit-header">QUTest</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture">test markup</div>
+
+    <script type="text/javascript" src="vendor/qutest/lib/qunit.js"></script>
+    <script type="text/javascript" src="vendor/qutest/lib/pavlov.js"></script>
+
+    <script>
+      //QUnit.config.autostart = false;
+      QUnit.config.testTimeout = 2000;
+    </script>
+
+    <script src="build/app.js"></script>
+
+    <script>
+      pavlov.specify('soundcloud-playlists', function() {
+
+        describe('The built file', function() {
+
+          it('pollutes the global namespace', function() {
+
+            assert(window._, 'underscore').isDefined();
+            assert(window.$, 'jQuery').isDefined();
+            assert(window.Backbone, 'Backbone').isDefined();
+
+          });
+
+        });
+
+
+        describe('The app itself', function() {
+
+          it('will be tested in production', assert.pass);
+
+        });
+
+
+      });
+
+    </script>
+
+  </body>
+</html>

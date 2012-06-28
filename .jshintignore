@@ -1,0 +1,6 @@
+src/vendor
+vendor
+node_modules
+bin/r.js
+bin/build.js
+build/
