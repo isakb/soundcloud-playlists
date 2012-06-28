@@ -1,0 +1,9 @@
+{
+    "auth": {
+        "username":     "Enter your rackspace username",
+        "apiKey":    	"Enter your rackspace cloud files api key",
+        "host":         "lon.auth.api.rackspacecloud.com"
+    },
+    "container":         "Enter your cloud files container",
+    "servicenet":        false
+}
