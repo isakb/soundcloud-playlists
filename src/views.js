@@ -145,7 +145,7 @@ function(_, $, Backbone, SC,
 
         // when user is editing details of playlist and submits the form
         onEditPlaylist: function(e) {
-            var name, description;
+            var name, description, cache;
 
             e.preventDefault();
 
@@ -159,9 +159,19 @@ function(_, $, Backbone, SC,
             name = $('<div/>').text(name).html();
             description = $('<div/>').text(description).html();
 
-            this.model.set('description', description);
-            this.model.set('name', name);
-            this.model.save();
+            cache = this.model.toJSON(); // To check if anything changed
+
+            // This will trigger model change, which in turn re-renders this
+            // view, if the user has modified any value in the form.
+            this.model.set({
+                description: description,
+                name: name
+            });
+
+            // Hide the edit form also if no changes were made:
+            if (_.isEqual(cache, this.model.toJSON())) {
+                this.render();
+            }
         }
     });
 

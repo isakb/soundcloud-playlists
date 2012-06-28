@@ -36,7 +36,19 @@ function(_, $, Backbone, Store, SC){
      * @type {Backbone.Collection}
      */
     Tracks = Backbone.Collection.extend({
-        model: Track
+        model: Track,
+
+        /**
+         * Calculate the duration of all tracks.
+         *
+         * @return {Number} total duration in milliseconds
+         */
+        getDuration: function() {
+            return this.reduce(function(duration, track) {
+                return duration + track.get('duration');
+            }, 0);
+        }
+
     });
 
     /**
@@ -69,27 +81,35 @@ function(_, $, Backbone, Store, SC){
 
             this.currentTrack = tracks.at(0);
 
-            tracks.bind('add', this.calculateDuration);
-            tracks.bind('remove', this.calculateDuration);
-            tracks.bind('change', this.calculateDuration);
+            // Auto-save changes. TODO: Add support for undoing changes.
+            this.bind('change',     this.save);
+
+            // Auto-refresh playlist if tracks are added, removed, or changed:
+            tracks.bind('add',      this.refresh);
+            tracks.bind('remove',   this.refresh);
+            tracks.bind('change',   this.refresh);
         },
 
-        calculateDuration: function() {
+        /**
+         * Refresh the playlist after something has changed.
+         *
+         * Re-calculates total duration of tracks.
+         */
+        refresh: function() {
             var tracks = this.get('tracks');
-            if (!tracks) {
-                this.set('duration', 0);
-                return;
-            }
-            console.log('calculating duration of tracks', tracks.length);
-            this.set('duration', tracks.reduce(function(duration, track) {
-                return duration + track.get('duration');
-            }, 0));
+            this.set('duration', tracks.length ? tracks.getDuration() : 0);
         },
 
+        /**
+         * Backbone's toJSON would not includ our tracks here. So let's override
+         * it.
+         *
+         * @return {Object} Model attributes as JSON object
+         */
         toJSON: function() {
             var json = Playlist.__super__.toJSON.call(this);
             json.tracks = this.get('tracks');
-            if (_.isObject(json.tracks)) {
+            if (!_.isArray(json.tracks)) {
                 json.tracks = json.tracks.toJSON();
             }
             return json;
@@ -144,7 +164,7 @@ function(_, $, Backbone, Store, SC){
         model: Playlist,
 
         // Save all playlists in local store under this namespace:
-        localStorage: new Store("my-soundcloud-playlists"),
+        localStorage: new Store("my-soundcloud-playlists")
     });
 
     return {
