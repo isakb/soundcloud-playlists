@@ -1,0 +1,3 @@
+[submodule "vendor/qutest"]
+	path = vendor/qutest
+	url = https://github.com/isakb/QUTest.git
