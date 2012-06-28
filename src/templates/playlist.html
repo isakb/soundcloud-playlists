@@ -1,78 +1,50 @@
 <!-- Playlist template -->
-<form>
 
-  <% if (_isEditingMeta) { %>
+<div class="meta" title="Click to edit playlist details">
+  <h3><%= name %></h3>
+  <%= description %>
+</div>
 
-    <div class="meta-edit">
-      <h3>Playlist details</h3>
+<table class="tracks">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Track</th>
+      <th>Length</th>
+    </tr>
+  </thead>
 
-      <label>
-        Name
-        <input name="name" title="Playlist name" value="<%= name %>">
-      </label>
+  <tbody>
+  <% _.each(tracks, function(track) { %>
+  <tr data-sc-track="<%= track.id %>">
+    <td><%= track.user_name %></td>
+    <td><%= track.title %></td>
+    <td><%= formatDuration(track.duration) %></td>
+  </tr>
+  <% }); %>
+  </tbody>
 
-      <label>
-        Description
-        <textarea name="description" title="Description"><%= description %></textarea>
-      </label>
-
-      <a class="abort" href="javascript:void(0)">Cancel</a>
-
-      <div class="align-right">
-        <button class="css3 align-right">Save changes</button>
-      </div>
-    </div>
-
-  <% } else { %>
-
-    <div class="meta" title="Click to edit playlist details">
-      <h3><%= name %></h3>
-      <%= description %>
-    </div>
-
-    <table class="tracks">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Track</th>
-          <th>Length</th>
-        </tr>
-      </thead>
-
-      <tbody>
-      <% _.each(tracks, function(track) { %>
-      <tr data-sc-track="<%= track.id %>">
-        <td><%= track.user_name %></td>
-        <td><%= track.title %></td>
-        <td><%= formatDuration(track.duration) %></td>
-      </tr>
-      <% }); %>
-      </tbody>
-
-      <tfoot>
-        <tr>
-          <td colspan="2">
-            Number of tracks: <%= tracks.length %>
-          </td>
-          <td>
-            <%= formatDuration(duration) %>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-
-    <div class="add-to-playlist">
-      <input name="new_track"
-             title="Enter a URL of a track and press ENTER"
-             placeholder="http://soundcloud.com/author/song">
-
-      <button class="css3">Add to playlist</button>
-    </div>
+  <tfoot>
+    <tr>
+      <td colspan="2">
+        Number of tracks: <%= tracks.length %>
+      </td>
+      <td>
+        <%= formatDuration(duration) %>
+      </td>
+    </tr>
+  </tfoot>
+</table>
 
 
+<form class="add-track">
 
-  <% } %>
+  <div class="add-to-playlist">
+    <input name="new_track"
+           title="Enter a URL of a track and press ENTER"
+           placeholder="http://soundcloud.com/author/song">
 
-
+    <button class="css3">Add to playlist</button>
+  </div>
 
 </form>

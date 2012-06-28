@@ -13,8 +13,11 @@ function(_, $, Backbone, SC_API,
         template: T.playlist,
 
         events: {
-            'click .meta': 'onClickMeta',
-            'click tbody tr': 'onClickTrack'
+            'click .meta':              'onClickMeta',
+            'click tbody tr':           'onClickTrack',
+            'click a.abort':            'onClickAbort',
+            'submit form.edit-meta':    'onEditPlaylist',
+            'submit form.add-track':    'onAddTrack'
         },
 
         initialize: function() {
@@ -31,13 +34,34 @@ function(_, $, Backbone, SC_API,
         },
 
         render: function() {
-            console.log('Rendering playlist view');
-            this.$el.html(this.template(_.extend({},
-                this.options,
-                this.model.toJSON(),
-                templateHelpers
-            )));
+            var html,
+                tplVars = _.extend({},
+                                   this.model.toJSON(),
+                                   templateHelpers);
+
+            html = (this.overrideTemplate || this.template)(tplVars);
+            this.$el.html(html);
             return this;
+        },
+
+        // when user fills in a track URL and submits the form
+        onAddTrack: function(e) {
+            var url, $trackUrl;
+
+            e.preventDefault();
+
+            $trackUrl = this.$('form input[name=new_track]');
+            url = $trackUrl.val();
+            if (! /https?:\/\/.+/.test(url)) {
+                $trackUrl
+                    .val('Please enter the URL of the track here!')
+                    .select();
+
+                return;
+            } else {
+                this.model.addTrackFromUrl(url);
+            }
+            this.render();
         },
 
         // when user clicks on a track in the playlist
@@ -47,9 +71,38 @@ function(_, $, Backbone, SC_API,
             this.trigger('tracks:clicked', this.tracks.get(id));
         },
 
+        // when user cancels editing details
+        onClickAbort: function(e) {
+            delete this.overrideTemplate;
+            this.render();
+        },
+
         // when user clicks on the playlist title or description
         onClickMeta: function(e) {
-            this.options._isEditingMeta = !this.options._isEditingMeta;
+            this.overrideTemplate = T.playlist_edit;
+            this.render();
+        },
+
+        // when user is editing details of playlist and submits the form
+        onEditPlaylist: function(e) {
+            var name, description;
+
+            e.preventDefault();
+
+            delete this.overrideTemplate;
+
+            name = this.$('form [name=name]').val() || 'no-name';
+            description = this.$('form [name=description]').val()
+
+            // Since I'm using a very lightweight templating library
+            // I will have to take care of escaping HTML myself:
+            name = $('<div/>').text(name).html();
+            description = $('<div/>').text(description).html();
+
+            this.model.set('description', description);
+            this.model.set('name', name);
+            this.model.save();
+
             this.render();
         }
     });

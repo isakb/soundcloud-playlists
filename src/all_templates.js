@@ -7,12 +7,14 @@ define([
     'underscore',
     'text!./templates/app.html',
     'text!./templates/player.html',
-    'text!./templates/playlist.html'
+    'text!./templates/playlist.html',
+    'text!./templates/playlist_edit.html'
 ], function(
     _,
     app,
     player,
-    playlist
+    playlist,
+    playlist_edit
 ) {
     "use strict";
 
@@ -21,7 +23,8 @@ define([
     _.each({
         app:            app,
         player:         player,
-        playlist:       playlist
+        playlist:       playlist,
+        playlist_edit:  playlist_edit
 
     }, function(html, name) {
         T[name] = _.template(html);
