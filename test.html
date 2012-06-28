@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Quick Unit Test Runner</title>
     <link rel="stylesheet" href="vendor/qutest/lib/qunit.css">
+
+    <link rel="stylesheet" href="build/styles.css">
   </head>
   <body>
     <h1 id="qunit-header">QUTest</h1>
@@ -18,10 +20,14 @@
 
     <script>
       //QUnit.config.autostart = false;
-      QUnit.config.testTimeout = 2000;
+      QUnit.config.testTimeout = 5000;
     </script>
 
-    <script src="build/app.js"></script>
+
+    <div id="soundcloud-playlists" style="opacity: 0.3">Here goes the app</div>
+
+    <!-- test the built file -->
+    <script src="build/main.js"></script>
 
     <script>
       pavlov.specify('soundcloud-playlists', function() {
@@ -41,7 +47,46 @@
 
         describe('The app itself', function() {
 
-          it('will be tested in production', assert.pass);
+          it('should display a player widget', function() {
+            assert($('iframe:visible').length).equals(1);
+          });
+
+          it('should display a playlist', function() {
+            assert($('#playlist:visible').length).equals(1);
+          });
+
+          it('should display a list of playlists', function() {
+            assert($('#playlists:visible').length).equals(1);
+          });
+
+          describe('the playlist', function() {
+            it('should be empty from the start, and it should be possible to add a track URL and get feedback quickly',
+              async(function() {
+
+              // I know, this is a quite ugly test, but better than nothing for
+              // now.
+
+              assert($('#playlist table tbody tr').length).equals(0);
+
+              $('.add-track input[name=new_track]')
+              .val('http://soundcloud.com/isakba/bravissimo-2001');
+              $('.add-track button').trigger('click');
+
+              setTimeout(function() {
+                resume();
+
+                assert($('#playlist table tbody tr').length).equals(1);
+
+                assert($('#playlist table tbody tr').text().replace(/\s+/g, ' '))
+                .equals(" ► Bravissimo [2001] isak-ba 00:06:11 x ");
+
+              }, 1000);
+
+            }));
+
+
+          });
+
 
         });
 

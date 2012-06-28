@@ -228,7 +228,7 @@ function(_, $, Backbone, SC,
     });
 
     AppView = Backbone.View.extend({
-        el: 'body',
+        el: '#soundcloud-playlists',
         template: T.app,
 
         initialize: function() {
