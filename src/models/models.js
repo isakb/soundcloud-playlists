@@ -74,9 +74,10 @@ define([
     Playlist = Backbone.Model.extend({
 
         /**
-         * @property {String} name         The name of the playlist
-         * @property {String} description  A short description of the playlist
-         * @property {Number} duration     Total playlist duration (ms)
+         * @property {String}  name         The name of the playlist
+         * @property {String}  description  A short description of the playlist
+         * @property {Number}  duration     Total playlist duration (ms)
+         * @property {Boolean} isActive     True if this playlist is in use now
          */
         defaults: {
             name: 'New Playlist',
@@ -106,17 +107,26 @@ define([
             this.tracks.fetch();
 
             // Auto-save changes. TODO: Add support for undoing changes.
-            this.bind('change', this.save);
+            this.on('change', this.save);
 
             // Auto-refresh playlist if tracks are added, removed, or changed:
             this.tracks.on('add remove change', this.refresh);
         },
 
         /**
+         * Set the active track to another track.
+         * @param  {models.Track} track
+         */
+        setActiveTrack: function(track) {
+            this.activeTrackIndex = this.tracks.indexOf(track);
+        },
+
+        /**
          * Get the currently active track (defaults to the first track or null).
          */
         getActiveTrack: function() {
-            return this.tracks.at(this.activeTrackIndex);
+            console.log('get active track');
+            return this.tracks.at(this.activeTrackIndex) || this.getNextTrack();
         },
 
         /**
@@ -128,7 +138,6 @@ define([
         getNextTrack: function() {
             var nextIndex = (this.activeTrackIndex + 1) % this.tracks.length;
 
-            debugger
             this.activeTrackIndex = nextIndex;
 
             return this.tracks.at(nextIndex);
@@ -147,16 +156,16 @@ define([
 
             this.set('duration', numTracks > 0 ? tracks.getDuration() : 0);
 
-            // If the currently active track was deleted, let's activate the
-            // previous track in the playlist, so that the next playing track
-            // will be the expected track.
-            while (!tracks.at(i)) {
-                i = (numTracks + i - 1) % numTracks;
-            }
-            if (i !== this.activeTrackIndex) {
-                console.log('Changing the active track in the playlist');
-                this.trigger('tracks:active:changed');
-            }
+            // // If the currently active track was deleted, let's activate the
+            // // previous track in the playlist, so that the next playing track
+            // // will be the expected track.
+            // while (!tracks.at(i)) {
+            //     i = (numTracks + i - 1) % numTracks;
+            // }
+            // if (i !== this.activeTrackIndex) {
+            //     console.log('Changing the active track in the playlist');
+            //     this.trigger('tracks:active:changed');
+            // }
         },
 
         /**
@@ -200,7 +209,11 @@ define([
 
     });
 
-    // TODO:
+    /**
+     * A collection of Playlists.
+     *
+     * @type {Backbone.Collection}
+     */
     Playlists = Backbone.Collection.extend({
         model: Playlist,
         localStorage: new Store("sc-playlists"),

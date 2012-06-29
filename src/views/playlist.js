@@ -5,6 +5,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    '../events',
     '../models/models',
     '../helpers/template_helpers',
     'text!../templates/playlist.html',
@@ -13,6 +14,7 @@ define([
     _,
     $,
     Backbone,
+    EventHub,
     models,
     templateHelpers,
     playlistTemplate,
@@ -56,6 +58,15 @@ define([
         },
 
         /**
+         * Set the active track to another track.
+         * @param  {models.Track} track
+         */
+        activateTrack: function(track) {
+            this.model.setActiveTrack(track);
+            this.render();
+        },
+
+        /**
          * Change the playlist model used in the view.
          * @param  {models.Playlist} playlist The new model
          */
@@ -67,7 +78,8 @@ define([
         },
 
         render: function() {
-            var html,
+            var activeElement,
+                html,
                 tplVars = _.extend({},
                                    this.model.toJSON(),
                                    { tracks: this.tracks.toJSON() },
@@ -75,6 +87,11 @@ define([
 
             html = (this.overrideTemplate || this.template)(tplVars);
             this.$el.html(html);
+
+            activeElement = this.$('.tracks tr[data-track-index=' +
+                this.model.activeTrackIndex +']');
+            activeElement.addClass('active');
+
             return this;
         },
 
@@ -106,8 +123,15 @@ define([
 
         // when user clicks on a track in the playlist
         onClickTrack: function(e) {
-            var i = $(e.target).closest('tr').data('trackIndex');
-            this.trigger('tracks:clicked', this.tracks.at(i));
+            var i = $(e.target).closest('tr').data('trackIndex'),
+                track = this.tracks.at(i);
+
+            if (track !== this.model.getActiveTrack()) {
+                // If the track changed, we need to show the new active track.
+                this.model.setActiveTrack(track);
+                EventHub.trigger('playlist:change-track', track);
+                this.render();
+            }
         },
 
         // when user clicks on the playlist title or description

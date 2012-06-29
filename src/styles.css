@@ -176,8 +176,19 @@ td { vertical-align: top; }
       color: blue;
       background-color: white;
     }
+    #playlist tbody tr.active {
+      background-color: #ff5a05;
+      color: white;
+      text-shadow: 0 -1px 1px black;
+    }
 
-    /* FIXME: This will not be good on touchpads, where we can't hover. */
+    #playlist tbody tr .pic {
+      visibility: hidden;
+    }
+    #playlist tbody tr.active td.pic {
+      visibility: visible;
+    }
+
     #playlist tbody td.actions .css3button {
       visibility: hidden;
     }

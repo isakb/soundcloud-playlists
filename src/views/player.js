@@ -7,6 +7,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    '../events',
     'sc_api',
     '../models/models',
     'text!../templates/player.html'
@@ -14,6 +15,7 @@ define([
     _,
     $,
     Backbone,
+    EventHub,
     SC,
     models,
     playerTemplate
@@ -72,14 +74,14 @@ define([
             if (!this.widget) {
                 return;
             }
-            _.each(this.widgetEvents, function(callback, eventName) {
+            _.each(this.onWidget, function(callback, eventName) {
                 this.widget.bind(SC.Widget.Events[eventName], _.bind(callback, this));
             }, this);
         },
 
 
         // see: http://developers.soundcloud.com/docs/api/html5-widget#events
-        widgetEvents: {
+        onWidget: {
 
             // fired when the widget has loaded its data and is ready to accept
             // external calls.
@@ -89,35 +91,40 @@ define([
 
             // fired when the sound begins to play.
             PLAY: function() {
-                console.log('Starting to play track.', arguments);
+                console.log('Starting to play track.');
             },
 
             // fired when the sound finishes.
             FINISH: function() {
-                var nextTrack = this.model.getNextTrack();
+                EventHub.trigger('player:finished-track');
+                debugger
+                // var nextTrack = this.model.getNextTrack();
 
-                if (nextTrack) {
-                    this.playTrack(nextTrack);
-                }
+                // if (nextTrack) {
+                //     this.playTrack(nextTrack);
+
+                // }
             }
         },
 
         /**
          * Play a track in the player.
+         *
          * @param  {models.Track} track
          */
         playTrack: function(track) {
             var widget = this.widget;
 
-            console.log('Widget is loading track:', track);
             widget.load(track.get('uri'), this.options.widgetParams);
         },
 
         /**
          * Change to another playlist.
+         *
+         * @param {models.Playlist} playlist
          */
         changeModel: function(playlist) {
-            playlist.bind('change', this.maybeRefreshWidget);
+            playlist.on('change', this.maybeRefreshWidget);
 
             this.model = playlist;
             if (this.widget) {
@@ -147,8 +154,6 @@ define([
                 this.widget.load(activeTrack.get('uri'));
                 this.$iframe.slideDown({duration: 50});
                 this.$iframe.show();
-            } else {
-                this.$iframe.slideUp({duration: 80});
             }
         }
 

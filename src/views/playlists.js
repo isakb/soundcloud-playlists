@@ -51,11 +51,12 @@ define([
             this.activePlaylist = playlist;
             playlist.set('isActive', true);
             this.render();
-            EventHub.trigger('playlist-activated', playlist);
+
+            EventHub.trigger('playlists:change-playlist', playlist);
         },
 
         render: function() {
-            var activeIndex = this.collection.indexOf(this.getActivePlaylist()),
+            var activeIndex = this.collection.indexOf(this.activePlaylist),
                 activeElement;
 
             this.$el.html(this.template({

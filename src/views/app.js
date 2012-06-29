@@ -30,6 +30,14 @@ define([
         el: '#soundcloud-playlists',
         template: _.template(appTemplate),
 
+        // Bind to a global EventHub's events:
+        onEventHub: {
+            'playlists:change-playlist':    'onChangedPlaylist',
+            'playlist:change-track':        'onChangedTrack',
+            'player:finished-track':        'onPlayerFinishedTrack'
+
+        },
+
         initialize: function() {
             _.bindAll(this);
 
@@ -37,10 +45,9 @@ define([
 
             this.renderComponents();
 
-            this.playlist.on('tracks:clicked',
-                _.bind(this.player.playTrack, this.player));
-
-            EventHub.on('playlist-activated', this.onChangePlaylist);
+            _.each(this.onEventHub, function(callbackName, event) {
+                EventHub.on(event, this[callbackName]);
+            }, this);
         },
 
         /**
@@ -74,12 +81,36 @@ define([
         },
 
         /**
+         * The user clicked on another track in the playlist. Play it.
+         *
+         * @param  {models.Track} track
+         */
+        onChangedTrack: function(track) {
+            this.player.playTrack(track);
+        },
+
+        /**
+         * The player has played the whole track. Start playing next track,
+         * indicate the change also in the playlist view.
+         *
+         * @param  {models.Track} track
+         */
+        onPlayerFinishedTrack: function() {
+            var track = this.playlist.model.getNextTrack();
+
+            if (track) {
+                this.player.playTrack(track);
+                this.playlist.activateTrack(track);
+            }
+        },
+
+        /**
          * When the user activates another playlist, let's also load that in the
          * playlist view and activate the same playlist in the player.
          *
          * @param  {models.Playlist} playlist
          */
-        onChangePlaylist: function(playlist) {
+        onChangedPlaylist: function(playlist) {
             this.playlist.changeModel(playlist);
             this.player.changeModel(playlist);
         }
