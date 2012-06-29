@@ -2,7 +2,7 @@
  * NB: Using SC Widget API here, not SC JS SDK.
  */
 define(['underscore', 'jquery', 'backbone', 'sc_api',
-        './models', './all_templates', './template_helpers'],
+        '../models/models', '../helpers/all_templates', '../helpers/template_helpers'],
 function(_, $, Backbone, SC,
          models, T, templateHelpers){
     "use strict";

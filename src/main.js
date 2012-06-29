@@ -50,7 +50,7 @@ require.config({
     }
 });
 // MAIN dependencies and definition:
-require(['underscore', 'jquery', './models', './views'],
+require(['underscore', 'jquery', './models/models', './views/views'],
 function(_, $, models, views) {
 "use strict";
 

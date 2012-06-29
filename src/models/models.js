@@ -1,4 +1,4 @@
-define(['underscore', 'jquery', 'backbone', 'localstorage', './sc_client'],
+define(['underscore', 'jquery', 'backbone', 'localstorage', '../helpers/sc_client'],
 function(_, $, Backbone, Store, SC){
     "use strict";
     var Track, Tracks, Playlist, Playlists;

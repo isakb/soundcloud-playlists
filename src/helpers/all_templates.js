@@ -5,11 +5,11 @@
  */
 define([
     'underscore',
-    'text!./templates/app.html',
-    'text!./templates/player.html',
-    'text!./templates/playlist.html',
-    'text!./templates/playlist_edit.html',
-    'text!./templates/playlists.html'
+    'text!../templates/app.html',
+    'text!../templates/player.html',
+    'text!../templates/playlist.html',
+    'text!../templates/playlist_edit.html',
+    'text!../templates/playlists.html'
 ], function(
     _,
     app,
