@@ -60,12 +60,10 @@ define([
          * @param  {models.Playlist} playlist The new model
          */
         changeModel: function(playlist) {
-            this.$el.fadeOut('fast');
             this.destroyModelBindings();
             this.model = playlist;
             this.createModelBindings();
             this.render();
-            this.$el.fadeIn('fast');
         },
 
         render: function() {

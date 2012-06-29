@@ -1,6 +1,3 @@
-/**
- * Main App View / Controller.
- */
 define([
     'underscore',
     'jquery',
@@ -24,32 +21,40 @@ define([
 ){
     "use strict";
 
-    var AppView,
-        console = window.console;
+    var AppView;
 
+    /**
+     * Main App View / Controller.
+     */
     AppView = Backbone.View.extend({
-
         el: '#soundcloud-playlists',
         template: _.template(appTemplate),
 
         initialize: function() {
-            // First render, so the components have elements.
-            this.render();
-
             _.bindAll(this);
 
-            this.initComponents();
+            this.render(); // creates DOM nodes that the components need
 
-            this.playlist.bind('tracks:clicked', this.player.playTrack, this.player);
+            this.renderComponents();
+
+            this.playlist.on('tracks:clicked',
+                _.bind(this.player.playTrack, this.player));
 
             EventHub.on('playlist-activated', this.onChangePlaylist);
-
-            // Assuming that fetch is done on a local storage, initialization
-            // can take place already here.
-            //this.initComponents();
         },
 
-        initComponents: function() {
+        /**
+         * Render the layout of the app.
+         */
+        render: function() {
+            this.$el.html(this.template(this.options));
+            return this;
+        },
+
+        /**
+         * Initialize and render the player, playlist, and playlists nav bar.
+         */
+        renderComponents: function() {
             this.playlists = new PlaylistsView({
                 collection: new models.Playlists()
             }).render();
@@ -59,26 +64,24 @@ define([
             }).render();
 
             this.player = new PlayerView({
-                startUrl:       this.options.playerStartUrl,
+                model: this.playlists.getActivePlaylist(),
                 widgetParams: {
-                    auto_play:      true,
-                    show_user:      true,
-                    sharing:        false, // FB sharing code throws errors
-                    start_track:    0
+                    auto_play: true,
+                    show_user: true,
+                    sharing: false // FB sharing code throws annoying errors.
                 }
             }).render();
         },
 
-
-        render: function() {
-            console.log('render app');
-            this.$el.html(this.template(this.options));
-            return this;
-        },
-
+        /**
+         * When the user activates another playlist, let's also load that in the
+         * playlist view and activate the same playlist in the player.
+         *
+         * @param  {models.Playlist} playlist
+         */
         onChangePlaylist: function(playlist) {
-            console.log('Changing to another playlist');
             this.playlist.changeModel(playlist);
+            this.player.changeModel(playlist);
         }
 
     });

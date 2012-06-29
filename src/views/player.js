@@ -27,38 +27,79 @@ define([
      */
     PlayerView = Backbone.View.extend({
         el: '#sc-player',
-        template: _.template(playerTemplate),
 
         initialize: function() {
-            this.options = _.extend({
-                baseUrl: "http://w.soundcloud.com/player/?url=" +
-                    encodeURIComponent(this.options.startUrl) +
-                    '&' + $.param(this.options.widgetParams)
-            }, this.options);
-        },
-
-        onReady: function() {
-            var widget,
-                that = this;
-
-            this.widgetIframe = this.$('iframe')[0];
-            widget = SC.Widget(this.widgetIframe);
-
-            widget.bind(SC.Widget.Events.READY, function() {
-                console.log('widget ready event');
-                that.trigger('widget:ready');
-                widget.bind(SC.Widget.Events.FINISH, function() {
-                    console.log('widget finish event');
-                    that.trigger('widget:finish');
-                    // widget.load(nextTrackUrl);
-                });
-            });
-            this.widget = widget;
+            _.bindAll(this);
+            // Create the iframe, not attached to DOM yet.
+            this.$iframe = $(playerTemplate);
+            this.changeModel(this.model);
         },
 
         render: function() {
-            this.$el.html(this.template(this.options));
+            this.$el.html('');
             return this;
+        },
+
+        /**
+         * Create the widget if not already created, and load first track in
+         * playlist.
+         *
+         * Should not be called before we have at least one track to play.
+         */
+        initWidget: function() {
+            var src, config, track;
+
+            if (this.widget) {
+                return; // FIXME: probably unnecessary defensive programming
+            }
+
+            track = this.model.getActiveTrack();
+
+            if (!track) {
+                return;
+            }
+            config = _.extend({
+                url:  track.get('uri')
+            }, this.options.widgetParams);
+            src = "http://w.soundcloud.com/player/?" + $.param(config);
+
+            this.$iframe.attr('src', src);
+            this.$el.replaceWith(this.$iframe);
+            this.widget = SC.Widget(this.$iframe[0]);
+        },
+
+        initWidgetEvents: function() {
+            if (!this.widget) {
+                return;
+            }
+            _.each(this.widgetEvents, function(callback, eventName) {
+                this.widget.bind(SC.Widget.Events[eventName], _.bind(callback, this));
+            }, this);
+        },
+
+
+        // see: http://developers.soundcloud.com/docs/api/html5-widget#events
+        widgetEvents: {
+
+            // fired when the widget has loaded its data and is ready to accept
+            // external calls.
+            READY: function(player, data) {
+                console.log('wiget:player:ready');
+            },
+
+            // fired when the sound begins to play.
+            PLAY: function() {
+                console.log('Starting to play track.', arguments);
+            },
+
+            // fired when the sound finishes.
+            FINISH: function() {
+                var nextTrack = this.model.getNextTrack();
+
+                if (nextTrack) {
+                    this.playTrack(nextTrack);
+                }
+            }
         },
 
         /**
@@ -70,7 +111,47 @@ define([
 
             console.log('Widget is loading track:', track);
             widget.load(track.get('uri'), this.options.widgetParams);
+        },
+
+        /**
+         * Change to another playlist.
+         */
+        changeModel: function(playlist) {
+            playlist.bind('change', this.maybeRefreshWidget);
+
+            this.model = playlist;
+            if (this.widget) {
+                this.maybeRefreshWidget();
+            } else {
+                this.initWidget();
+            }
+            this.initWidgetEvents();
+        },
+
+        /**
+         * In case the widget was hidden because the playlist had no tracks,
+         * we may need to refresh the widget as the playlist changes.
+         *
+         */
+        maybeRefreshWidget: function() {
+            var activeTrack;
+
+            if (!this.widget) {
+                console.log('asdf');
+                return;
+            }
+
+            activeTrack = this.model.getActiveTrack();
+
+            if (activeTrack) {
+                this.widget.load(activeTrack.get('uri'));
+                this.$iframe.slideDown({duration: 50});
+                this.$iframe.show();
+            } else {
+                this.$iframe.slideUp({duration: 80});
+            }
         }
+
     });
 
 
