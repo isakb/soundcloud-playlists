@@ -50,9 +50,15 @@ require.config({
     }
 });
 // MAIN dependencies and definition:
-require(['underscore', 'jquery', './models/models', './views/views'],
-function(_, $, models, views) {
+require(['underscore', 'jquery', './models/models', './views/app'],
+function(_, $, models, AppView) {
 "use strict";
+
+    return new AppView({
+        //playlist: playlist,
+        playerStartUrl: 'http://api.soundcloud.com/users/isakba',
+        bookmarkletUrl: window.location.href.replace('index.html', 'src/bookmarklet.js')
+    });
 
     // playlist = new models.Playlist({
     //     name: 'Dummy playlist',
@@ -64,12 +70,5 @@ function(_, $, models, views) {
     //     'http://soundcloud.com/isakba/blip-blip-2001',
     //     'http://soundcloud.com/awooooo/09-the-16th-hour'
     // ], _.bind(playlist.addTrackFromUrl, playlist));
-
-    return new views.AppView({
-        //playlist: playlist,
-        playerStartUrl: 'http://api.soundcloud.com/users/isakba',
-        bookmarkletUrl: window.location.href.replace('index.html', 'src/bookmarklet.js')
-    });
-
 
 });
