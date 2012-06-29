@@ -30,16 +30,16 @@ define([
         template: _.template(playerTemplate),
 
         initialize: function() {
-            var widget,
-                that = this;
-
             this.options = _.extend({
                 baseUrl: "http://w.soundcloud.com/player/?url=" +
                     encodeURIComponent(this.options.startUrl) +
                     '&' + $.param(this.options.widgetParams)
             }, this.options);
+        },
 
-            this.render();
+        onReady: function() {
+            var widget,
+                that = this;
 
             this.widgetIframe = this.$('iframe')[0];
             widget = SC.Widget(this.widgetIframe);

@@ -4,14 +4,15 @@
 
 <div class="new-playlist">New playlist</div>
 
-<ul>
-  <% _.each(playlists, function(playlist) { %>
-    <li class="active">Test active </li>
-    <li data-playlist-id="<%= playlist.id %>" title="<%- playlist.description %>">
+<ul class="playlists">
+  <% _.each(playlists, function(playlist, index) { %>
+    <li class="playlist" data-index="<%= index %>"
+
+    	title="<%- playlist.description %>">
+
       <%= playlist.name %>
+      <span title="Delete playlist" class="delete small css3button">x</span>
+
     </li>
   <% }); %>
 </ul>
-
-
-

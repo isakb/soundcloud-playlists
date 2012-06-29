@@ -305,6 +305,18 @@ td { vertical-align: top; }
     color: #333;
     font-weight: bold;
   }
+
+  /* FIXME: This will not be good on touchpads, where we can't hover. */
+  #playlists li .css3button {
+    position: absolute;
+    right: 2px;
+    visibility: hidden;
+  }
+  #playlists li:hover .css3button {
+    visibility: visible;
+  }
+
+
   .align-right {
     float: right;
     clear: both;
@@ -316,7 +328,14 @@ td { vertical-align: top; }
     border-radius: 0 0 5px 5px;
   }
 
-
+  .glow {
+    -webkit-transition: text-shadow 0.3s linear;
+    -moz-transition: text-shadow 0.3s linear;
+    -ms-transition: text-shadow 0.3s linear;
+    -o-transition: text-shadow 0.3s linear;
+    transition: text-shadow 0.3s linear;
+    text-shadow: 0 -1px 2px #000;
+  }​
 
 /* ==|== media queries ====================================================== */
 

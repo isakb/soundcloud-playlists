@@ -38,25 +38,41 @@ define([
         },
 
         initialize: function() {
-            if (!this.model) {
-                this.model = new models.Playlist();
-            }
-            this.tracks = this.model.get('tracks');
-
             _.bindAll(this);
-
             this.options._isEditingMeta = false;
-            this.model.bind('change', this.render);
-            this.tracks.bind('add', this.render);
-            this.tracks.bind('remove', this.render);
+            this.createModelBindings();
+        },
 
+        createModelBindings: function() {
+            this.model.on('change', this.render);
+            this.tracks = this.model.tracks;
+            this.tracks.on('add remove', this.render);
+        },
+
+        destroyModelBindings: function() {
+            this.model.off('change', this.render);
+            delete this.tracks;
+            this.model.tracks.off('add remove', this.render);
+        },
+
+        /**
+         * Change the playlist model used in the view.
+         * @param  {models.Playlist} playlist The new model
+         */
+        changeModel: function(playlist) {
+            this.$el.fadeOut('fast');
+            this.destroyModelBindings();
+            this.model = playlist;
+            this.createModelBindings();
             this.render();
+            this.$el.fadeIn('fast');
         },
 
         render: function() {
             var html,
                 tplVars = _.extend({},
                                    this.model.toJSON(),
+                                   { tracks: this.tracks.toJSON() },
                                    templateHelpers);
 
             html = (this.overrideTemplate || this.template)(tplVars);
@@ -98,15 +114,12 @@ define([
 
         // when user clicks on the playlist title or description
         onClickDeleteTrack: function(e) {
-            var i, track;
+            var i;
 
-            e.preventDefault();
             e.stopPropagation();
 
             i = $(e.target).closest('tr').data('trackIndex');
-            track = this.tracks.at(i);
-
-            this.tracks.remove(track);
+            this.tracks.at(i).destroy();
         },
 
 

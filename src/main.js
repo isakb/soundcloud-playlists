@@ -39,7 +39,7 @@ require.config({
         },
         'localstorage': {
             deps: ['underscore', 'backbone'],
-            exports: 'Store'
+            exports: 'Backbone.LocalStorage'
         },
         'sc_sdk': {
             exports: 'SC'
@@ -55,7 +55,7 @@ function(_, $, models, AppView) {
 "use strict";
 
     return new AppView({
-        //playlist: playlist,
+        // model: new models.App(),
         playerStartUrl: 'http://api.soundcloud.com/users/isakba',
         bookmarkletUrl: window.location.href.replace('index.html', 'src/bookmarklet.js')
     });

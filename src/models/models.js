@@ -1,7 +1,21 @@
-define(['underscore', 'jquery', 'backbone', 'localstorage', '../helpers/sc_client'],
-function(_, $, Backbone, Store, SC){
+define([
+    'underscore',
+    'jquery',
+    'backbone',
+    '../events',
+    'localstorage',
+    '../helpers/sc_client'
+], function(
+    _,
+    $,
+    Backbone,
+    EventHub,
+    Store,
+    SC
+){
     "use strict";
-    var Track, Tracks, Playlist, Playlists;
+    var Track, Tracks, Playlist, Playlists, App;
+
 
     /**
      * A single Soundcloud track.
@@ -9,7 +23,6 @@ function(_, $, Backbone, Store, SC){
      * @type {Backbone.Model}
      */
     Track = Backbone.Model.extend({
-        urlRoot: location.protocol + '//api.soundcloud.com/tracks/',
 
         // These are the attributes we are interested in, although a soundcloud
         // track has even more attributes.
@@ -37,6 +50,7 @@ function(_, $, Backbone, Store, SC){
      */
     Tracks = Backbone.Collection.extend({
         model: Track,
+        //localStorage: new Store("sc-tracks"),
 
         /**
          * Calculate the duration of all tracks.
@@ -51,6 +65,7 @@ function(_, $, Backbone, Store, SC){
 
     });
 
+
     /**
      * A playlist model wraps the Tracks object and some metadata about
      * a playlist.
@@ -62,32 +77,40 @@ function(_, $, Backbone, Store, SC){
         /**
          * @property {String} name         The name of the playlist
          * @property {String} description  A short description of the playlist
-         * @property {Tracks} tracks       The tracks included in the playlist
+         * @property {Number} duration     Total playlist duration (ms)
          */
         defaults: {
-            name: 'My New Playlist',
+            name: 'New Playlist',
             description: '',
-            duration: 0, // total playlist duration in milliseconds
-            tracks: []
+            duration: 0,
+            isActive: true
         },
 
         initialize: function() {
-            var tracks = this.get('tracks');
-            if (_.isArray(tracks)) {
-                tracks = new Tracks(tracks);
-                this.set('tracks', tracks);
-            }
+            var canSave,name, count = 0;
+
             _.bindAll(this);
 
-            this.currentTrack = tracks.at(0);
+            // Ugly but works:
+            if (this.isNew()) {
+                // Try not to reuse the "New Playlist" name.
+                name = this.get('name');
+                while (this.collection.where({name: this.get('name')}).length) {
+                    count += 1;
+                    this.set('name', name + ' (' + count + ')', { silent: true});
+                }
+                canSave = this.save();
+                console.log("SAVE!", this.id);
+            }
+            this.tracks = new Tracks();
+            this.tracks.localStorage = new Store('sc-tracks-' + this.id);
+            this.tracks.fetch();
 
             // Auto-save changes. TODO: Add support for undoing changes.
-            this.bind('change',     this.save);
+            this.bind('change', this.save);
 
             // Auto-refresh playlist if tracks are added, removed, or changed:
-            tracks.bind('add',      this.refresh);
-            tracks.bind('remove',   this.refresh);
-            tracks.bind('change',   this.refresh);
+            this.tracks.on('add remove change', this.refresh);
         },
 
         /**
@@ -96,24 +119,18 @@ function(_, $, Backbone, Store, SC){
          * Re-calculates total duration of tracks.
          */
         refresh: function() {
-            var tracks = this.get('tracks');
+            var tracks = this.tracks;
             this.set('duration', tracks.length ? tracks.getDuration() : 0);
         },
 
-        /**
-         * Backbone's toJSON would not includ our tracks here. So let's override
-         * it.
-         *
-         * @return {Object} Model attributes as JSON object
-         */
-        toJSON: function() {
-            var json = Playlist.__super__.toJSON.call(this);
-            json.tracks = this.get('tracks');
-            if (!_.isArray(json.tracks)) {
-                json.tracks = json.tracks.toJSON();
-            }
-            return json;
-        },
+
+        // /**
+        //  * Since our tracks are not scalars, Backbone's toJSON will not handle
+        //  * them.
+        //  *
+        //  * @return {Object} Model attributes as JSON object
+        //  */
+        // toJSON: nestedToJSON,
 
         /**
          * Add a track from the URL that you typically go to when you click
@@ -130,7 +147,7 @@ function(_, $, Backbone, Store, SC){
             var tracks = this.get('tracks'),
                 dfd = $.Deferred();
 
-            SC.get('/resolve', { url: url }, function(track, error) {
+            SC.get('/resolve', { url: url }, _.bind(function(track, error) {
                 if (error) {
                     dfd.reject(error);
                 }
@@ -143,16 +160,14 @@ function(_, $, Backbone, Store, SC){
                     track.sc_id = track.id;
                     delete track.id;
 
-                    track = new Track(track);
-                    tracks.add(track);
-                    dfd.resolve(track);
+                    dfd.resolve(this.tracks.create(track));
                 } else {
                     dfd.reject({
                         message: "This URL does not go to a soundcloud track."
                     });
                 }
 
-            });
+            }, this));
 
             return dfd.promise();
         }
@@ -162,16 +177,37 @@ function(_, $, Backbone, Store, SC){
     // TODO:
     Playlists = Backbone.Collection.extend({
         model: Playlist,
+        localStorage: new Store("sc-playlists"),
 
-        // Save all playlists in local store under this namespace:
-        localStorage: new Store("my-soundcloud-playlists")
+        initialize: function() {
+            _.bindAll(this);
+
+            this.fetch();
+
+            // Always have at least one playlist.
+            if (this.length === 0) {
+                this.create();
+            }
+        },
+
+
+        /**
+         * Create a new playlist and set it as active.
+         * @type {[type]}
+         */
+        create: function() {
+            var newPlaylist = Playlists.__super__.create.call(this);
+            this.trigger('playlists:activate', newPlaylist);
+        }
+
     });
 
     return {
         Track: Track,
         Tracks: Tracks,
         Playlist: Playlist,
-        Playlists: Playlists
+        Playlists: Playlists,
+        App: App
     };
 
 });
