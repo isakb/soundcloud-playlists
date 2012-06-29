@@ -64,7 +64,9 @@ desc('Build optimized code using r.js');
 task('build', ['clean'], function() {
     console.log('Building optimized code');
     jake.exec(["node node_modules/requirejs/bin/r.js -o bin/build.js",
-                "mv build/index_prod.html build/index.html"], function() {}, {
+                "mv build/index_prod.html build/index.html",
+                // Let's just remove a bunch of unnecessary files from build:
+                "find build/* -type d | xargs rm -rf"], function() {}, {
         stdout: true,
         stderr: true,
         breakOnError: true
