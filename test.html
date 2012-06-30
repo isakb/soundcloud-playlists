@@ -60,11 +60,23 @@
           });
 
           describe('the playlist', function() {
-            it('should be empty from the start, and it should be possible to add a track URL and get feedback quickly',
-              async(function() {
 
               // I know, this is a quite ugly test, but better than nothing for
               // now.
+
+            before(function() {
+              pause();
+
+              // Make sure that we are working on a new playlist.
+              $('.new-playlist').trigger('click');
+
+              setTimeout(function() {
+                resume();
+              }, 100);
+
+            })
+            it('should be empty from the start, and it should be possible to add a track URL and get feedback quickly',
+              async(function() {
 
               assert($('#playlist table tbody tr').length).equals(0);
 
