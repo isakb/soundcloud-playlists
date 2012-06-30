@@ -50,15 +50,12 @@ define([
         initWidget: function() {
             var src, config, track;
 
-            if (this.widget) {
-                return; // FIXME: probably unnecessary defensive programming
-            }
-
             track = this.model.getActiveTrack();
 
-            if (!track) {
+            if (this.widget || !track) {
                 return;
             }
+
             config = _.extend({
                 url:  track.get('uri')
             }, this.options.widgetParams);
@@ -67,12 +64,7 @@ define([
             this.$iframe.attr('src', src);
             this.$el.replaceWith(this.$iframe);
             this.widget = SC.Widget(this.$iframe[0]);
-        },
 
-        initWidgetEvents: function() {
-            if (!this.widget) {
-                return;
-            }
             _.each(this.onWidget, function(callback, eventName) {
                 this.widget.bind(SC.Widget.Events[eventName], _.bind(callback, this));
             }, this);
@@ -102,7 +94,6 @@ define([
          */
         playTrack: function(track) {
             var widget = this.widget;
-
             widget.load(track.get('uri'), this.options.widgetParams);
         },
 
@@ -112,37 +103,10 @@ define([
          * @param {models.Playlist} playlist
          */
         changeModel: function(playlist) {
-            playlist.on('change', this.maybeRefreshWidget);
-
             this.model = playlist;
-            if (this.widget) {
-                this.maybeRefreshWidget();
-            } else {
-                this.initWidget();
-            }
-            this.initWidgetEvents();
-        },
-
-        /**
-         * In case the widget was hidden because the playlist had no tracks,
-         * we may need to refresh the widget as the playlist changes.
-         *
-         */
-        maybeRefreshWidget: function() {
-            var activeTrack;
-
-            if (!this.widget) {
-                return;
-            }
-
-            activeTrack = this.model.getActiveTrack();
-
-            if (activeTrack) {
-                this.widget.load(activeTrack.get('uri'));
-                this.$iframe.slideDown({duration: 50});
-                this.$iframe.show();
-            }
+            this.initWidget();
         }
+
 
     });
 

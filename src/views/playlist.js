@@ -48,6 +48,9 @@ define([
             this.model.on('change', this.render);
             this.tracks = this.model.tracks;
             this.tracks.on('add remove', this.render);
+            this.tracks.on('add', function() {
+                EventHub.trigger('playlist:track-added');
+            });
         },
 
         destroyModelBindings: function() {

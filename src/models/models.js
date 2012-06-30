@@ -139,7 +139,7 @@ define([
 
             this.activeTrackIndex = nextIndex;
 
-            return this.tracks.at(nextIndex);
+            return this.tracks.at(nextIndex) || this.tracks.at(0);
         },
 
 
@@ -153,17 +153,6 @@ define([
                 numTracks = this.tracks.length;
 
             this.set('duration', numTracks > 0 ? tracks.getDuration() : 0);
-
-            // // If the currently active track was deleted, let's activate the
-            // // previous track in the playlist, so that the next playing track
-            // // will be the expected track.
-            // while (!tracks.at(i)) {
-            //     i = (numTracks + i - 1) % numTracks;
-            // }
-            // if (i !== this.activeTrackIndex) {
-            //     console.log('Changing the active track in the playlist');
-            //     this.trigger('tracks:active:changed');
-            // }
         },
 
         /**

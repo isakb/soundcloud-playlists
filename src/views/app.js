@@ -34,6 +34,7 @@ define([
         onEventHub: {
             'playlists:change-playlist':    'onChangedPlaylist',
             'playlist:change-track':        'onChangedTrack',
+            'playlist:track-added':         'onAddedTrack',
             'player:finished-track':        'onPlayerFinishedTrack'
 
         },
@@ -89,6 +90,15 @@ define([
                     sharing: false // FB sharing code throws annoying errors.
                 }
             }).render();
+        },
+
+        /**
+         * The user added a track in the playlist. Show the player if invisible.
+         *
+         * @param  {models.Track} track
+         */
+        onAddedTrack: function() {
+            this.player.initWidget();
         },
 
         /**
