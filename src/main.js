@@ -1,7 +1,7 @@
 /**
- * Soundcloud Playlist application.
+ * Soundcloud Playlists application.
  *
- * https://github.com/isakb/...
+ * https://github.com/isakb/soundcloud-playlists
  *
  * Copyright (c) 2012 Isak B
  * GPL Licensed (LICENSE.txt)
@@ -54,21 +54,13 @@ require(['underscore', 'jquery', './models/models', './views/app'],
 function(_, $, models, AppView) {
 "use strict";
 
-    return new AppView({
-        // model: new models.App(),
-        playerStartUrl: 'http://api.soundcloud.com/users/isakba',
-        bookmarkletUrl: window.location.href.replace('index.html', 'src/bookmarklet.js')
-    });
+    var appUrl = location.protocol + '//' + location.hostname +
+                (location.port === '80' ? '' : (':' + location.port)) +
+                location.pathname;
 
-    // playlist = new models.Playlist({
-    //     name: 'Dummy playlist',
-    //     description: 'Just a placeholder playlist for now.'
-    // });
-    // _.each([
-    //     'http://soundcloud.com/isakba/mahadatest6',
-    //     'http://soundcloud.com/isakba/bravissimo-2001',
-    //     'http://soundcloud.com/isakba/blip-blip-2001',
-    //     'http://soundcloud.com/awooooo/09-the-16th-hour'
-    // ], _.bind(playlist.addTrackFromUrl, playlist));
+    return new AppView({
+        appUrl: appUrl,
+        bookmarkletUrl: appUrl.replace('index.html', 'bookmarklet.js')
+    });
 
 });

@@ -110,15 +110,25 @@ define([
 
                 return;
             } else {
-                this.model.addTrackFromUrl(url)
-                .done(function(track){
-                    console.log('Added track: %s to playlist', track.get('title'));
-                })
-                .fail(function(error) {
-                    window.alert('Could not add that URL. ' + error.message);
-                });
+                this.addTrackFromUrl(url);
             }
             this.render();
+        },
+
+        /**
+         * Add a track from a typical Soundcloud track URL, e.g.:
+         * http://soundcloud.com/isakba/mahadatest6
+         *
+         * @param {String} trackUrl
+         */
+        addTrackFromUrl: function(trackUrl) {
+            this.model.addTrackFromUrl(trackUrl)
+            .done(function(track){
+                // console.log('Added track: %s to playlist', track.get('title'));
+            })
+            .fail(function(error) {
+                window.alert('Sorry! Not a valid track URL: ' + trackUrl);
+            });
         },
 
         // when user clicks on a track in the playlist

@@ -39,6 +39,8 @@ define([
         },
 
         initialize: function() {
+            var trackUrl;
+
             _.bindAll(this);
 
             this.render(); // creates DOM nodes that the components need
@@ -48,6 +50,16 @@ define([
             _.each(this.onEventHub, function(callbackName, event) {
                 EventHub.on(event, this[callbackName]);
             }, this);
+
+            // Allow to add tracks with the bookmarklet:
+            try {
+                trackUrl = decodeURIComponent(
+                    location.search.match(/\baddTrack=([^&]+)/)[1]);
+                this.playlist.addTrackFromUrl(trackUrl);
+            } catch (e) {
+                console.error(e);
+            }
+
         },
 
         /**
