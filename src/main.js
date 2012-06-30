@@ -12,7 +12,7 @@ require.config({
     paths: {
         // Backbone and its dependencies:
         'underscore':   'vendor/underscore',
-        'jquery':       'vendor/jquery',
+        'jquery':       'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min',
         'backbone':     'vendor/backbone',
 
         // Local storage of backbone models:
@@ -50,17 +50,23 @@ require.config({
     }
 });
 // MAIN dependencies and definition:
-require(['underscore', 'jquery', './models/models', './views/app'],
-function(_, $, models, AppView) {
+require(['jquery', 'backbone', './views/app'],
+function($, Backbone, AppView) {
 "use strict";
 
     var appUrl = location.protocol + '//' + location.hostname +
                 (location.port === '80' ? '' : (':' + location.port)) +
                 location.pathname;
 
+    // With jQuery hosted by CDN and the rest of the files concatenated in prod
+    // environment, Backbone doesn't yet know about jQuery. Solution:
+    Backbone.setDomLibrary($);
+
     return new AppView({
         appUrl: appUrl,
         bookmarkletUrl: appUrl.replace('index.html', 'bookmarklet.js')
     });
+
+
 
 });
