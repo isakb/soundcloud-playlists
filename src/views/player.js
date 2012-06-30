@@ -21,8 +21,7 @@ define([
     playerTemplate
 ){
     "use strict";
-    var PlayerView,
-        console = window.console;
+    var PlayerView;
 
     /**
      * The Soundcloud Widget (track player).
@@ -85,25 +84,14 @@ define([
 
             // fired when the widget has loaded its data and is ready to accept
             // external calls.
-            READY: function(player, data) {
-                console.log('wiget:player:ready');
-            },
+            READY: function() {},
 
             // fired when the sound begins to play.
-            PLAY: function() {
-                console.log('Starting to play track.');
-            },
+            PLAY: function() {},
 
             // fired when the sound finishes.
             FINISH: function() {
                 EventHub.trigger('player:finished-track');
-                debugger
-                // var nextTrack = this.model.getNextTrack();
-
-                // if (nextTrack) {
-                //     this.playTrack(nextTrack);
-
-                // }
             }
         },
 
@@ -144,7 +132,6 @@ define([
             var activeTrack;
 
             if (!this.widget) {
-                console.log('asdf');
                 return;
             }
 

@@ -57,9 +57,8 @@ define([
                     location.search.match(/\baddTrack=([^&]+)/)[1]);
                 this.playlist.addTrackFromUrl(trackUrl);
             } catch (e) {
-                console.error(e);
+                // Not adding any track.
             }
-
         },
 
         /**

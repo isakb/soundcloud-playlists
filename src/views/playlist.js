@@ -22,8 +22,7 @@ define([
 ){
     "use strict";
 
-    var PlaylistView,
-        console = window.console;
+    var PlaylistView;
 
     PlaylistView = Backbone.View.extend({
         el: '#playlist',

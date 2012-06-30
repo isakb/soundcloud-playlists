@@ -125,7 +125,6 @@ define([
          * Get the currently active track (defaults to the first track or null).
          */
         getActiveTrack: function() {
-            console.log('get active track');
             return this.tracks.at(this.activeTrackIndex) || this.getNextTrack();
         },
 
@@ -151,8 +150,7 @@ define([
          */
         refresh: function() {
             var tracks = this.tracks,
-                numTracks = this.tracks.length,
-                i = this.activeTrackIndex;
+                numTracks = this.tracks.length;
 
             this.set('duration', numTracks > 0 ? tracks.getDuration() : 0);
 

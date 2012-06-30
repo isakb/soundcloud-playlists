@@ -1,9 +1,12 @@
 /**
- * Install deps, build and test.
+ * Show available tasks by default.
  */
-desc('Default task - install deps, build and test.');
-task("default", ['deps', 'build', 'server', 'test'], function() {
-    console.log('OK');
+desc('Default task - show available tasks');
+task("default", [], function() {
+    jake.exec(["jake -T"], function() {}, {
+        stdout: true,
+        stderr: true
+    });
 });
 
 /**
@@ -25,7 +28,7 @@ task("deps", function() {
 /**
  * Run unit tests from console.
  */
-desc('Run unit tests in phantomjs (assuming that you have started the server)');
+desc('Run unit tests in phantomjs (first run jake:build and jake:server &)');
 task('test', [], function() {
     jake.exec(["./vendor/qutest/run http://localhost:8888/test.html " + process.argv.slice(3)], function() {}, {
         stdout: true,

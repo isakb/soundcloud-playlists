@@ -44,7 +44,6 @@ define([
         },
 
         setActivePlaylist: function(playlist) {
-            console.log('Setting active playlist:', playlist);
             if (this.activePlaylist) {
                 this.activePlaylist.set('isActive', false);
             }
