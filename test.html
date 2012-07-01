@@ -82,7 +82,7 @@
 
               $('.add-track input[name=new_track]')
               .val('http://soundcloud.com/isakba/bravissimo-2001');
-              $('.add-track button').trigger('click');
+              $('.add-track .submit').trigger('click');
 
               setTimeout(function() {
                 resume();
@@ -90,7 +90,7 @@
                 assert($('#playlist table tbody tr').length).equals(1);
 
                 assert($('#playlist table tbody tr').text().replace(/\s+/g, ' '))
-                .equals(" ► Bravissimo [2001] isak-ba 00:06:11 x ");
+                .equals(" Bravissimo [2001] isak-ba 6:11 x ");
 
               }, 1000);
 
