@@ -33,6 +33,17 @@ define(['underscore'], function(_) {
             m = m % 60;
 
             return _.map([h, m, s], pad).join(':');
+        },
+
+        // format a time such as 362300 ms as minutes:seconds, e.g. 6:02.
+        formatShortTime: function(ms) {
+            var x, s, m;
+
+            x = ms / 1000;
+            s = x % 60;
+            m = x / 60;
+
+            return [m|0, pad(s|0)].join(':');
         }
     };
 });

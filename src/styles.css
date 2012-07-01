@@ -105,6 +105,76 @@ td { vertical-align: top; }
     background-color: #999;
   }
 
+  #player {
+    background-color: #f5f5f5;
+  }
+  #player .info .artwork {
+    width: 64px;
+    height: 64px;
+    opacity: 0.5;
+  }
+  #player .info .title {
+    position: absolute;
+    color: #666;
+    text-shadow: 0 2px 3px #ccc;
+    font-size: 28px;
+    top: 5px;
+    left: 69px;
+  }
+  #player .info .username {
+    position: absolute;
+    color: #999;
+    font-size: 12px;
+    top: 46px;
+    left: 69px;
+  }
+
+  #player .interactive {
+    background-color: #eee;
+    width: 100%;
+
+  }
+
+  #player .slider {
+    min-width: 200px;
+  }
+
+  #player .cell {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  #player .buttons {
+    /*width: 132px;*/
+    position: absolute;
+    top: 16px;
+    left: 16px;
+  }
+
+
+  #player .buttons button.play {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: black;
+    padding: 4px 6px;
+    background-color: #ccc;
+    border-radius: 19px;
+    border: 2px solid black;
+    box-shadow: 0px 2px 6px 2px #999;
+  }
+  #player .buttons button.play:disabled {
+    color: #999;
+    padding: 4px 6px;
+    background-color: #eee;
+    border-color: #999;
+    box-shadow: none;
+  }
+  #player .buttons button.play.playing {
+    color: #ff5a05;
+    background-color: white;
+    border-color: #ff5a05;
+  }
+
   #playlist {
     padding: 5px;
   }
@@ -274,7 +344,7 @@ td { vertical-align: top; }
     min-width: 300px;
   }
 
-  input:focus,
+  form input:focus,
   textarea:focus,
   #playlist .meta-edit input:focus,
   #playlist .meta-edit textarea:focus {

@@ -20,7 +20,6 @@ require.config({
 
         // Soundcloud JavaScript SDK and Widget API:
         'sc_sdk':       'http://connect.soundcloud.com/sdk',
-        'sc_api':       'vendor/sc_api',
 
         // RequireJS text plugin, used to load templates:
         'text':         'vendor/require.text',
@@ -42,9 +41,6 @@ require.config({
             exports: 'Backbone.LocalStorage'
         },
         'sc_sdk': {
-            exports: 'SC'
-        },
-        'sc_api': {
             exports: 'SC'
         }
     }

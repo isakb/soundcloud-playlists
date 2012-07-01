@@ -98,7 +98,7 @@ define([
          * @param  {models.Track} track
          */
         onAddedTrack: function() {
-            this.player.initWidget();
+            this.player.refresh();
         },
 
         /**

@@ -176,6 +176,7 @@ define([
                 if (track.kind === 'track') {
                     // We don't use deep models in this project.
                     track.user_name = track.user.username;
+                    track.user_avatar_url = track.user.avatar_url;
                     delete track.user;
                     // If we keep the id field we can only have a track once per
                     // playlist, which is not so good. So let's rename it.
