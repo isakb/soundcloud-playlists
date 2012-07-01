@@ -8,6 +8,7 @@ define([
     './playlists',
     './playlist',
     './player',
+    './add_track',
     'text!../templates/app.html'
 ], function(
     _,
@@ -19,6 +20,7 @@ define([
     PlaylistsView,
     PlaylistView,
     PlayerView,
+    AddTrackView,
     appTemplate
 ){
     "use strict";
@@ -36,7 +38,7 @@ define([
         onEventHub: {
             'playlists:change-playlist':    'onChangedPlaylist',
             'playlist:change-track':        'onChangedTrack',
-            'playlist:track-added':         'onAddedTrack',
+            'add-track-form:track-added':   'onAddedTrack',
             'player:finished-track':        'onPlayerFinishedTrack'
 
         },
@@ -76,20 +78,34 @@ define([
          * Initialize and render the player, playlist, and playlists nav bar.
          */
         renderComponents: function() {
+            var user = new models.User(),
+                playlists = new models.Playlists(),
+                playlist;
+
             this.auth = new AuthView({
-                model: new models.User()
+                model: user
             }).render();
 
             this.playlists = new PlaylistsView({
-                collection: new models.Playlists()
+                collection: playlists
             }).render();
+
+            // FIXME: getActivePlaylist should be a method of the model, not
+            // the view.
+            playlist = this.playlists.getActivePlaylist();
 
             this.playlist = new PlaylistView({
-                model: this.playlists.getActivePlaylist()
+                model: playlist
             }).render();
 
+            this.addTrack = new AddTrackView({
+                model: playlist
+            }).render();
+
+            // TODO: Maybe the player should only have the track as a model, not
+            // a whole playlist...
             this.player = new PlayerView({
-                model: this.playlists.getActivePlaylist(),
+                model: playlist,
                 widgetParams: {
                     auto_play: true,
                     show_user: true,
@@ -140,6 +156,7 @@ define([
         onChangedPlaylist: function(playlist) {
             this.playlist.changeModel(playlist);
             this.player.changeModel(playlist);
+            this.addTrack.changeModel(playlist);
         }
 
     });

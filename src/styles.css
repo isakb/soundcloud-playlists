@@ -344,6 +344,39 @@ td { vertical-align: top; }
       padding-top: 10px;
     }
 
+  #playlist-add-track {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  #playlist-add-track form {
+    width: 100%;
+    position: relative;
+    display: table;
+    padding: 5px 205px 5px 5px;
+  }
+
+  #playlist-add-track .input {
+    display: table-cell;
+    padding-right: 20px;
+  }
+  #playlist-add-track .input input{
+    width: 100%;
+  }
+  #playlist-add-track .button {
+    text-align: right;
+    display: table-cell;
+    width: 110px;
+  }
+  #playlist-add-track .submit:link {
+    text-decoration:none;
+  }
+  #playlist-add-track .submit:link:hover {
+    text-decoration:none;
+    color: white;
+  }
 
   label {
     font-weight: bold;
@@ -378,7 +411,6 @@ td { vertical-align: top; }
     padding: 4px 10px;
     border: 1px solid silver;
     border-radius: 10px;
-    min-width: 300px;
   }
 
   form input:focus,
@@ -438,12 +470,6 @@ td { vertical-align: top; }
   .align-right {
     float: right;
     clear: both;
-  }
-
-  .add-to-playlist {
-    padding: 10px;
-    background-color: silver;
-    border-radius: 0 0 5px 5px;
   }
 
   .glow {

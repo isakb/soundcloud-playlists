@@ -3,6 +3,7 @@
   <section id="main">
     <div id="player"></div>
     <div id="playlist"></div>
+    <div id="playlist-add-track"></div>
   </section>
 
   <aside>
@@ -15,14 +16,14 @@
 
         <div id="auth"></div>
 
-        <div id="bookmarklet">
-          <label>Bookmarklet:</label>
-          <a href="javascript:(function(s){window.__scPlaylistsAppUrl='<%= appUrl %>';s=document.createElement('SCRIPT');s.type='text/javascript';s.src='<%= bookmarkletUrl %>?'+Math.random();document.getElementsByTagName('head')[0].appendChild(s);})()"
-            title="Drag-and-drop the bookmarklet to your bookmarks bar, and then just click it from any Soundcloud page."
-            >
-            Add track
-          </a>
+        <div id="links">
+            <a href="https://github.com/isakb/soundcloud-playlists/issues">
+              Report an issue
+            </a>
 
+            <div>
+              © 2012 Isak Bakken
+            </div>
 
         </div>
 

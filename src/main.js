@@ -50,18 +50,11 @@ require(['jquery', 'backbone', './views/app'],
 function($, Backbone, AppView) {
 "use strict";
 
-    var appUrl = location.protocol + '//' + location.hostname +
-                (location.port === '80' ? '' : (':' + location.port)) +
-                location.pathname;
-
     // With jQuery hosted by CDN and the rest of the files concatenated in prod
     // environment, Backbone doesn't yet know about jQuery. Solution:
     Backbone.setDomLibrary($);
 
-    return new AppView({
-        appUrl: appUrl,
-        bookmarkletUrl: appUrl.replace('index.html', 'bookmarklet.js')
-    });
+    return new AppView();
 
 
 
