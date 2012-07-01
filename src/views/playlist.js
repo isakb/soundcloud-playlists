@@ -32,7 +32,6 @@ define([
         editTemplate:   _.template(editPlaylistTemplate),
 
         events: {
-            'click .login':             'onClickLogin',
             'click .meta':              'onClickMeta',
             'click tbody tr':           'onClickTrack',
             'click .abort':             'onClickAbort',
@@ -98,15 +97,6 @@ define([
             activeElement.addClass('active');
 
             return this;
-        },
-
-        /**
-         * When clicking on the login (connect) link..
-         */
-        onClickLogin: function(e) {
-            SC.connect(function(){
-                EventHub.trigger('sc:connected');
-            });
         },
 
         // when user fills in a track URL and submits the form

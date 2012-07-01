@@ -73,8 +73,8 @@ td { vertical-align: top; }
     font-size: large;
     color: white;
     text-shadow: 0 1px 5px #999;
-    margin: 4px 0 10px 10px;
-    padding: 0;
+    margin: 0;
+    padding: 0 0 0 5px;
   }
   h3 {
     margin: 0;
@@ -86,16 +86,81 @@ td { vertical-align: top; }
     display: table;
     width: 100%;
     height: 100%;
-    padding-bottom: 20px;
   }
 
-  nav {
+  aside {
+    position: relative;
+    height: 100%;
     width: 200px;
     background-color: #ddd;
     display: table-cell;
     vertical-align: top;
     text-align: left;
     padding: 0;
+  }
+
+  #bookmarklet label {
+    position: absolute;
+    left: 100px;
+    top: 20px;
+  }
+  #bookmarklet a:link {
+    color: black;
+    text-decoration: none;
+    background-color: #ccc;
+    border-radius: 3px;
+    position: absolute;
+    padding: 4px;
+    left: 100px;
+    top: 40px;
+  }
+  #bookmarklet a:link:before {
+    content: " + ";
+    font-weight: bold;
+  }
+  aside .bottom {
+    font: arial;
+    color: #888;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    font-size: x-small;
+    padding: 0;
+    margin: 0;
+    background-color: #e5e5e5;
+  }
+
+  #auth {
+    font-size: smaller;
+    float: left;
+    margin-right: 10px;
+    height: 75px;
+    width: 75px;
+  }
+  #auth > button {
+    position: absolute;
+    top: 27px;
+    left: 16px;
+  }
+  #auth .user {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    color: #eee;
+    font-size: 11px;
+    text-shadow: 0 1px 2px black;
+  }
+  #auth .user a:link,
+  #auth .user a:visited {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  #auth .user .logout {
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
   }
 
   #main {
@@ -279,20 +344,6 @@ td { vertical-align: top; }
       padding-top: 10px;
     }
 
-  footer {
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    padding: 10px;
-    font-size: x-small;
-    background-color: #ddd;
-    color: gray;
-    box-shadow: inset 0px 3px 2px #999;
-  }
-  footer a:link {
-    color: #69c;
-    font-weight: bold;
-  }
 
   label {
     font-weight: bold;
@@ -302,36 +353,22 @@ td { vertical-align: top; }
   }
 
  .css3button {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
     color: #ffffff;
     padding: 4px 10px;
-    background: black;
-    background: -moz-linear-gradient(
-      top,
-      #000000 0%,
-      #a8a8a8);
-    background: -webkit-gradient(
-      linear, left top, left bottom,
-      from(#000000),
-      to(#a8a8a8));
+    background-color: #668;
     border-radius: 19px;
-    -moz-border-radius: 19px;
-    -webkit-border-radius: 19px;
     border: 2px solid #ffffff;
-    -moz-box-shadow:
-      0px 1px 3px rgba(000,000,000,0.5),
-      inset 0px 0px 1px rgba(255,255,255,0.7);
-    -webkit-box-shadow:
-      0px 1px 3px rgba(000,000,000,0.5),
-      inset 0px 0px 1px rgba(255,255,255,0.7);
-    text-shadow:
-      0px -1px 0px rgba(000,000,000,0.2),
-      0px 1px 0px rgba(255,255,255,0.3);
+    box-shadow:
+      0px 1px 3px #999;
+  }
+  .css3button:hover {
+    background-color: #66f;
+    box-shadow:;
+      0px 1px 3px #000,
+      inset 0px 0px 1px #fff;
   }
   .small.css3button {
     font-size: xx-small;
-    background: gray;
     padding: 4px 7px;
   }
 

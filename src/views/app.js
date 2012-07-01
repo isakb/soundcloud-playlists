@@ -4,6 +4,7 @@ define([
     'backbone',
     '../events',
     '../models/models',
+    './auth',
     './playlists',
     './playlist',
     './player',
@@ -14,6 +15,7 @@ define([
     Backbone,
     EventHub,
     models,
+    AuthView,
     PlaylistsView,
     PlaylistView,
     PlayerView,
@@ -74,6 +76,10 @@ define([
          * Initialize and render the player, playlist, and playlists nav bar.
          */
         renderComponents: function() {
+            this.auth = new AuthView({
+                model: new models.User()
+            }).render();
+
             this.playlists = new PlaylistsView({
                 collection: new models.Playlists()
             }).render();

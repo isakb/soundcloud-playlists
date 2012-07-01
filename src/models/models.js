@@ -14,7 +14,22 @@ define([
     SC
 ){
     "use strict";
-    var Track, Tracks, Playlist, Playlists, App;
+    var User, Track, Tracks, Playlist, Playlists, App;
+
+    /**
+     * Soundcloud User model. Mainly used for the auth view.
+     *
+     * @type {Backbone.Model}
+     */
+    User = Backbone.Model.extend({
+        defaults: {
+            avatar_url: '',
+            user_id: 0,
+            permalink_url: "",      // e.g. http://s.com/isakba/
+            uri: "",                // e.g. https://api.s..com/users/4446361
+            username: ""            // e.g. isak-ba"
+        }
+    });
 
 
     /**
@@ -229,6 +244,7 @@ define([
     });
 
     return {
+        User: User,
         Track: Track,
         Tracks: Tracks,
         Playlist: Playlist,
