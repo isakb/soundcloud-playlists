@@ -32,10 +32,11 @@ define([
         editTemplate:   _.template(editPlaylistTemplate),
 
         events: {
+            'submit form':              'onEditPlaylist',
             'click .meta':              'onClickMeta',
             'click tbody tr':           'onClickTrack',
             'click .abort':             'onClickAbort',
-            'click .delete':            'onClickDeleteTrack',
+            'click .delete':            'onClickDeleteTrack'
         },
 
         initialize: function() {
