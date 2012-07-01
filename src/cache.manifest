@@ -1,6 +1,7 @@
 CACHE MANIFEST
 cache.manifest
 index.html
+callback.html
 bookmarklet.js
 main.js
 styles.css
