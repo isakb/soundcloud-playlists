@@ -4,81 +4,65 @@
  * The purpose of this script is to find all sound cloud songs on the active
  * page, and allow the user to add any of them to the active playlist.
  */
-(function() {
+(function(window) {
     "use strict";
     /*global $ */ // SoundCloud has jQuery.
 
-    var appUrl = window.__scPlaylistsAppUrl,
-        appWindow;
+    var
 
+        /**
+         * Soundcloud has jQuery on their pages.
+         *
+         * @type {jQuery}
+         */
+        $ = window.$,
 
-    appWindow = open(appUrl + '?' + $.param({addTrack: ''+location}),
+        /**
+         * The URL of the plalists app.
+         * @type {String}
+         */
+        appUrl = window.__scPlaylistsAppUrl,
+
+        /**
+         * Find all links to soundtrack tracks on the current page:
+         *
+         * @return {Array} an array with paths of tracks (not full URL)
+         */
+        findTracksOnPage = function() {
+            return $('.player[data-sc-track]:visible h3 a[href]').map(function() {
+                return this.getAttribute('href');
+            });
+        },
+
+        /**
+         * A reference to the popup window that we will open.
+         *
+         * Will prevent us from opening a new popup every time the user clicks
+         * on the bookmarklet.
+         *
+         * @type {DOMWindow}
+         */
+        appWindow,
+
+        /**
+         * All the tracks that we find on the page.
+         */
+        tracks;
+
+    if (!$) {
+        return window.alert('This only works on Soundcloud pages.');
+    }
+
+    tracks = findTracksOnPage();
+
+    if (!tracks) {
+        return window.alert('No tracks found on this page.');
+    }
+
+    appWindow = open(appUrl + '?' + $.param({tracks: tracks}),
                     'scPlaylistsApp',
                     'left=20,top=20,width=600,height=600,toolbar=1,resizable=1');
 
     appWindow.focus();
 
-
-    // // TODO: More advanced version:
-
-
-    //     /**
-    //      * Cached jQuery object with all Soundclound tracks found on a
-    //      * Soundcloud page.
-    //      */
-    //     $$,
-
-    //     /**
-    //      * Remove leading and trailing whitespaces from a string.
-    //      *
-    //      * @param  {String} str
-    //      * @return {String}
-    //      */
-    //     trim = function(str) {
-    //         return str.replace(/^\s+|\s+$/g, '');
-    //     },
-
-    //     me = {
-    //         tracks: undefined,
-
-    //         findTrackInfo: function(selector) {
-    //             return trim($$.find(selector).text());
-    //         },
-
-    //         init: function() {
-    //             // Find all soundcloud tracks on the page, if possible (requires
-    //             // that jQuery exists on the page).
-    //             $$ = window.$ && $('.player[data-sc-track]:visible');
-
-    //             if (!($$ && $$.length > 0)) {
-    //                 window.alert('Cannot do anything on this page.');
-    //                 return;
-    //             }
-
-    //             this.findTracks();
-    //         },
-
-    //         findTracks: function() {
-    //             var re, scriptBody, json;
-    //             try {
-    //                 re = /bufferTracks\.push\(([^$]+)\);\s*$/;
-    //                 scriptBody = $$.find('script').html();
-    //                 json = scriptBody.match(re)[1];
-    //                 me.extra = JSON.parse(json);
-    //             } catch(e) {
-    //                 me.extra = {};
-    //             }
-    //             me.mainTrack = {
-    //                 author: me.findTrackInfo('.user-name'),
-    //                 title: me.findTrackInfo('.info-header h1'),
-    //                 duration: me.extra.duration,
-    //                 id: me.extra.id
-    //             };
-    //         }
-    //     };
-
-
-    // me.init();
-
-
-})();
+})(this);

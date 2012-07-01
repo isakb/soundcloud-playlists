@@ -26,7 +26,27 @@ define([
         },
 
         initialize: function() {
+            var trackUrls, parts;
+
             _.bindAll(this);
+
+            // Allow to add tracks with the bookmarklet:
+            try {
+                parts = location.search.slice(1).split('&');
+                trackUrls = _.map(parts, function(part) {
+                    var url = part.match(/^track[^=]*=([^&]+)/)[1];
+                    return decodeURIComponent(url);
+                });
+                if (trackUrls) {
+                    // add all of the tracks asynchronously
+                    _.each(trackUrls.map(decodeURIComponent), function(url) {
+                        _.defer(this.addTrackFromUrl.bind(this, url));
+                    }, this);
+                }
+            } catch (e) {
+                // Not adding any track.
+            }
+
         },
 
         /**
@@ -77,10 +97,15 @@ define([
         /**
          * Add a track from a typical Soundcloud track URL, e.g.:
          * http://soundcloud.com/isakba/mahadatest6
+         * or
+         * /isakba/mahdadatest6
          *
          * @param {String} trackUrl
          */
         addTrackFromUrl: function(trackUrl) {
+            if (trackUrl.charAt(0) === '/') {
+                trackUrl = 'http://soundcloud.com' + trackUrl;
+            }
             this.model.addTrackFromUrl(trackUrl)
             .done(function(track){
                 EventHub.trigger('add-track-form:track-added', track);
