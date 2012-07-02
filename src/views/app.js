@@ -131,8 +131,8 @@ define([
             var track = this.playlist.model.getNextTrack();
 
             if (track) {
-                this.player.playTrack(track);
                 this.playlist.activateTrack(track);
+                this.player.playTrack(track);
             }
         },
 

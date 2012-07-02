@@ -101,8 +101,7 @@ define([
             if (!this.isRendered) {
                 this.render();
             }
-
-            this.$play.prop('disabled', !this.model.getActiveTrack());
+            this.$play.prop('disabled', !this.track);
             if (!this.sound) {
                 this.$interactive.hide();
             } else {
@@ -150,6 +149,7 @@ define([
         // when sound is loaded and starts to play
         onSoundPlay: function() {
             this.refresh();
+            this.render();
         },
 
         onSoundPause: function() {
