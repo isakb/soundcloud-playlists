@@ -16,14 +16,11 @@ let window = @
     # The URL of the playlists app.
     appUrl = window.__scPlaylistsAppUrl
 
-    # Find all links to soundtrack tracks on the current page:
-    findTracksOnPage = ->
-      $ '.player[data-sc-track]:visible h3 a[href]' .map ->
-        @getAttribute \href
+    # All the tracks (IDs) that we find on the page.
+    tracks = $ '.player[data-sc-track]:visible' .map ->
+      @getAttribute \data-sc-track
 
-    # All the tracks that we find on the page.
-    tracks = findTracksOnPage()
-    die 'No tracks found on this page.'  unless tracks
+    die 'No tracks found on this page.'  unless tracks?.length
 
     # A reference to the popup window prevents us from opening a new popup
     # #every time the user clicks on the bookmarklet.

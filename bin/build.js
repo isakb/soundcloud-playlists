@@ -33,8 +33,8 @@
         beautify: false
     },
 
-    optimizeCss: "standard"
+    optimizeCss: "standard",
 
     // // Include 'use strict' in all files
-    // useStrict: true
+    useStrict: true
 })

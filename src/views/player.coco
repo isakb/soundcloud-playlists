@@ -18,7 +18,7 @@
   text!../templates/player.html
 ]>
 
-# The Soundcloud Widget (track player).
+# Custom Soundcloud track player.
 Backbone.View.extend do
   el: \#player
   template: _.template(playerTemplate)
@@ -35,16 +35,6 @@ Backbone.View.extend do
 
   # Events from SoundManager 2.
   # See http://www.schillmania.com/projects/soundmanager2/doc/
-  #
-  # Unused events that might be useful later:
-  #
-  # onload:                   \onSoundLoad
-  # onresume:                 \onSoundResume
-  # onsuspend:                \onSoundSuspend
-  # onstop:                   \onSoundStop
-  # whileloading:             \whileSoundLoading
-  #
-  # And the ones we actually need:
   soundEvents:
     onfinish:                 \onSoundFinish
     onpause:                  \onSoundPause
@@ -74,10 +64,10 @@ Backbone.View.extend do
     @track = @model.getActiveTrack!
     @render!  unless @isRendered
     @$play.prop \disabled, not @track
-    unless @sound
-      @$interactive.hide!
-    else
+    if @sound
       @$interactive.show!
+    else
+      @$interactive.hide!
     if @isPlaying!
       @$play.addClass \playing
     else
@@ -118,7 +108,7 @@ Backbone.View.extend do
     tenthSeconds = (ms / 100) | 0
     if tenthSeconds != @_lastTenthSeconds
       @$slider.val ms
-      @$currentTime.text templateHelpers.formatShortTime(ms)
+      @$currentTime.text templateHelpers.formatShortTime ms
     @_lastTenthSeconds = tenthSeconds
 
   onClickPlay: ->

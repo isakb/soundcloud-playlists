@@ -8,9 +8,10 @@
 Backbone.View.extend do
   el: \#auth
   template: _.template authTemplate
+
   events:
-    "click .login": \onClickLoginOrLogout
-    "click .logout": \onClickLoginOrLogout
+    "click .login":           \onClickLoginOrLogout
+    "click .logout":          \onClickLoginOrLogout
 
 
   initialize: ->
