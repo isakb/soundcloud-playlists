@@ -1,0 +1,146 @@
+_, $, Backbone, EventHub, Store, SC <- define <[ underscore jquery backbone ../events localstorage ../helpers/sc_client ]>
+
+# Soundcloud User model. Mainly used for the auth view.
+User = Backbone.Model.extend do
+  defaults:
+    avatar_url: ""
+    user_id: 0
+    permalink_url: ""   # e.g. http://s.com/isakba/
+    uri: ""             # e.g. https://api.s..com/users/4446361
+    username: ""        # e.g. isak-ba"
+
+# A single Soundcloud track.
+# These are the attributes we are interested in, although a soundcloud
+# track has even more attributes.
+Track = Backbone.Model.extend do
+  defaults:
+    artwork_url: null
+    duration: 0         # duration in milliseconds
+    sc_id: 0            # e.g. 14426514
+    permalink_url: ""   # e.g. http://s..com/isakba/bravissimo-2001
+    title: ""           # e.g. Bravissimo 2001
+    uri: ""             # e.g. http://api.s..com/tracks/14426514
+    user_id: null       # e.g. 4446361
+    user_name: ""       # e.g. isak-ba
+
+
+# A collection of Soundcloud tracks.
+# In essence a playlist, except that a playlist also has a name and
+# description, and perhaps some other meta-data.
+Tracks = Backbone.Collection.extend do
+  model: Track
+
+  # Total duration of all tracks in milliseconds
+  getDuration: ->
+    @reduce ((duration, track) -> duration + track.get \duration ), 0
+
+
+# A playlist model wraps the Tracks object and some metadata about
+# a playlist.
+Playlist = Backbone.Model.extend do
+  defaults:
+    name: "New Playlist"          # playlist name
+    description: ""               # short description of the playlist
+    duration: 0                   # total playlist duration (ms)
+    isActive: true                # is the playlist in use now?
+
+  initialize: ->
+    _.bindAll @
+    name = void
+    count = 0
+    @activeTrackIndex = 0
+
+    if @isNew!
+      # Try not to reuse the "New Playlist" name.
+      name = @get \name
+      while @collection.where(name: @get \name).length
+        count += 1
+        @set \name, "#{name} (#{count})", silent: true
+      @save!
+
+    @tracks = new Tracks!
+    @tracks.localStorage = new Store "sc-tracks-#{@id}"
+    @tracks.fetch!
+
+    # Auto-save changes.
+    @on \change, @save
+
+    # Auto-refresh playlist if tracks are added, removed, or changed:
+    @tracks.on "add remove change", @refresh
+
+
+  setActiveTrack: (track) ->
+    @activeTrackIndex = @tracks.indexOf(track)
+
+
+  getActiveTrack: ->
+    @tracks.at(@activeTrackIndex) or @getNextTrack!
+
+
+  # Get next active track (currently assuming that playlist will be repeated).
+  # Also updates the activeTrackIndex.
+  getNextTrack: ->
+    nextIndex = (@activeTrackIndex + 1) % @tracks.length
+    @activeTrackIndex = nextIndex
+    @tracks.at(nextIndex) or @tracks.at(0)
+
+
+  # Refresh the playlist after something has changed.
+  # Re-calculates total duration of tracks.
+  refresh: ->
+    tracks = @tracks
+    numTracks = @tracks.length
+    @set "duration", (if numTracks > 0 then tracks.getDuration! else 0)
+
+
+  # Add a track from the URL that you typically go to when you click
+  # on a Soundcloud track link on Soundcloud.
+  #
+  # Example url: http://soundcloud.com/isakba/bravissimo-2001
+  #
+  # Our playlist cannot handle this URL out of the box, since we need
+  # the unique track ID for the player.
+  addTrackFromUrl: (url) ->
+    dfd = $.Deferred!
+    SC.get "/resolve",
+      url: url
+    , _.bind((track, error) ->
+      dfd.reject error  if error
+      if track.kind is \track
+        track.user_name = track.user.username
+        track.user_avatar_url = track.user.avatar_url
+        delete track.user
+
+        # If we keep the id field we can only have a track once per
+        # playlist, which is not so good. So let's rename it.
+        track.sc_id = track.id
+        delete track.id
+
+        dfd.resolve @tracks.create(track)
+      else
+        dfd.reject message: "This URL does not go to a soundcloud track."
+    ), this
+    dfd.promise!
+
+
+# A collection of Playlists.
+Playlists = Backbone.Collection.extend do
+  model: Playlist
+  localStorage: new Store "sc-playlists"
+  initialize: ->
+    @fetch!
+    # Always have at least one playlist.
+    @create!  if @length is 0
+
+
+  # Create a new playlist and set it as active.
+  create: ->
+    newPlaylist = Playlists.__super__.create.call(this)
+    @trigger "playlists:activate", newPlaylist
+
+
+User: User
+Track: Track
+Tracks: Tracks
+Playlist: Playlist
+Playlists: Playlists
