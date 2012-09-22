@@ -1,7 +1,7 @@
-Soundcloud Playlists
+Soundcloud Playlists [![Build Status](https://secure.travis-ci.org/isakb/soundcloud-playlists.png?branch=master)](http://travis-ci.org/isakb/soundcloud-playlists)
 ====================
 
-A fully client-based web app that allows you to create playlists of ANY tracks
+A fully client-based web app that allows you to create playlists of any tracks
 on SoundCloud.
 
 Temporary Demo at: http://c1308469.r69.cf3.rackcdn.com/index.html
@@ -21,10 +21,9 @@ Dependencies
 You should in theory be able to simply open the index.html file and use the app
 like that (except for problems that occur when using the file: protocol).
 
-In order to get the dependencies need for development, you need ot have node.js
-installed, as well as npm, and `npm install -g jake`.
+For developing you need to have node.js > 0.6 and npm.
 
-Then you only have to run `jake deps` in order to get everything you need.
+Then you only have to run `npm install && jake deps` in order to get everything you need.
 
 Typing `jake -T` will list the tasks available.
 Typing `jake deploy` should deploy the project into the cloud.
@@ -33,25 +32,26 @@ Typing `jake deploy` should deploy the project into the cloud.
 Tech used
 =========
 - Soundcloud's JS SDK.
-- JavaScript, HTML5, CSS3.
+- JavaScript, Coco, HTML5, CSS3.
 - Backbone.js for the bulk of the app.
 - Backbone.Localstorage for storing playlists in the browser.
 - HTML5 boilerplate's CSS.
 - RequireJS (http://requirejs.org/) is used for dependency management.
 - Node.js (for dev. scripts and dev. server).
 - Rackspace Cloud Files for hosting.
+- Travis CI for testing.
 
 
 TODO
 ====
 
-- Make it possible to undo actions.
-- Make more unit tests.
+- Make a LiveScript version.
+- Update the temporary demo which is not the newest version.
 
 
 Known issues
 ============
 
 - The range input (for seeking) will not work in all browsers (e.g. Firefox).
-- There are very few unit tests.
+- There are few unit tests.
 
