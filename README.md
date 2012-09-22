@@ -4,7 +4,7 @@ Soundcloud Playlists
 A fully client-based web app that allows you to create playlists of ANY tracks
 on SoundCloud.
 
-Temporary Demo at: http://c1299476.r76.cf3.rackcdn.com/index.html
+Temporary Demo at: http://c1308469.r69.cf3.rackcdn.com/index.html
 
 Features
 ========
@@ -32,8 +32,8 @@ Typing `jake deploy` should deploy the project into the cloud.
 
 Tech used
 =========
-
-- JavaScript, HTML5, CSS3
+- Soundcloud's JS SDK.
+- JavaScript, HTML5, CSS3.
 - Backbone.js for the bulk of the app.
 - Backbone.Localstorage for storing playlists in the browser.
 - HTML5 boilerplate's CSS.
@@ -52,7 +52,6 @@ TODO
 Known issues
 ============
 
-- The Soundcloud Widget does not work in Chromium, see:
-https://getsatisfaction.com/soundcloud/topics/soundcloud_widget_wont_play_in_chrome_help
+- The range input (for seeking) will not work in all browsers (e.g. Firefox).
 - There are very few unit tests.
 

@@ -4,9 +4,11 @@ define([
     'backbone',
     '../events',
     '../models/models',
+    './auth',
     './playlists',
     './playlist',
     './player',
+    './add_track',
     'text!../templates/app.html'
 ], function(
     _,
@@ -14,9 +16,11 @@ define([
     Backbone,
     EventHub,
     models,
+    AuthView,
     PlaylistsView,
     PlaylistView,
     PlayerView,
+    AddTrackView,
     appTemplate
 ){
     "use strict";
@@ -34,14 +38,12 @@ define([
         onEventHub: {
             'playlists:change-playlist':    'onChangedPlaylist',
             'playlist:change-track':        'onChangedTrack',
-            'playlist:track-added':         'onAddedTrack',
+            'add-track-form:track-added':   'onAddedTrack',
             'player:finished-track':        'onPlayerFinishedTrack'
 
         },
 
         initialize: function() {
-            var trackUrl;
-
             _.bindAll(this);
 
             this.render(); // creates DOM nodes that the components need
@@ -51,15 +53,6 @@ define([
             _.each(this.onEventHub, function(callbackName, event) {
                 EventHub.on(event, this[callbackName]);
             }, this);
-
-            // Allow to add tracks with the bookmarklet:
-            try {
-                trackUrl = decodeURIComponent(
-                    location.search.match(/\baddTrack=([^&]+)/)[1]);
-                this.playlist.addTrackFromUrl(trackUrl);
-            } catch (e) {
-                // Not adding any track.
-            }
         },
 
         /**
@@ -74,16 +67,34 @@ define([
          * Initialize and render the player, playlist, and playlists nav bar.
          */
         renderComponents: function() {
-            this.playlists = new PlaylistsView({
-                collection: new models.Playlists()
+            var user = new models.User(),
+                playlists = new models.Playlists(),
+                playlist;
+
+            this.auth = new AuthView({
+                model: user
             }).render();
+
+            this.playlists = new PlaylistsView({
+                collection: playlists
+            }).render();
+
+            // FIXME: getActivePlaylist should be a method of the model, not
+            // the view.
+            playlist = this.playlists.getActivePlaylist();
 
             this.playlist = new PlaylistView({
-                model: this.playlists.getActivePlaylist()
+                model: playlist
             }).render();
 
+            this.addTrack = new AddTrackView({
+                model: playlist
+            }).render();
+
+            // TODO: Maybe the player should only have the track as a model, not
+            // a whole playlist...
             this.player = new PlayerView({
-                model: this.playlists.getActivePlaylist(),
+                model: playlist,
                 widgetParams: {
                     auto_play: true,
                     show_user: true,
@@ -98,7 +109,7 @@ define([
          * @param  {models.Track} track
          */
         onAddedTrack: function() {
-            this.player.initWidget();
+            this.player.refresh();
         },
 
         /**
@@ -120,8 +131,8 @@ define([
             var track = this.playlist.model.getNextTrack();
 
             if (track) {
-                this.player.playTrack(track);
                 this.playlist.activateTrack(track);
+                this.player.playTrack(track);
             }
         },
 
@@ -134,6 +145,7 @@ define([
         onChangedPlaylist: function(playlist) {
             this.playlist.changeModel(playlist);
             this.player.changeModel(playlist);
+            this.addTrack.changeModel(playlist);
         }
 
     });

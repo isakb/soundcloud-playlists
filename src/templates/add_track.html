@@ -1,0 +1,24 @@
+<form class="add-track">
+
+  <div class="input">
+    <input name="new_track"
+           title="Enter a URL of a track and press ENTER"
+           placeholder="http://soundcloud.com/author/song">
+
+  </div>
+
+  <div class="button">
+    <a
+        href="javascript:(function(s){window.__scPlaylistsAppUrl='<%= appUrl %>';s=document.createElement('SCRIPT');s.type='text/javascript';s.src='<%= bookmarkletUrl %>?'+Math.random();document.getElementsByTagName('head')[0].appendChild(s);})()"
+
+        title="Pro tip: Drag-and-drop this button to your bookmarks bar, and then just click it from any Soundcloud page, in order to quickly add a track."
+
+
+        class="submit css3button">
+
+      Add to playlist
+
+    </a>
+  </div>
+
+</form>

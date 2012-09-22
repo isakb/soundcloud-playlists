@@ -14,7 +14,22 @@ define([
     SC
 ){
     "use strict";
-    var Track, Tracks, Playlist, Playlists, App;
+    var User, Track, Tracks, Playlist, Playlists, App;
+
+    /**
+     * Soundcloud User model. Mainly used for the auth view.
+     *
+     * @type {Backbone.Model}
+     */
+    User = Backbone.Model.extend({
+        defaults: {
+            avatar_url: '',
+            user_id: 0,
+            permalink_url: "",      // e.g. http://s.com/isakba/
+            uri: "",                // e.g. https://api.s..com/users/4446361
+            username: ""            // e.g. isak-ba"
+        }
+    });
 
 
     /**
@@ -176,6 +191,7 @@ define([
                 if (track.kind === 'track') {
                     // We don't use deep models in this project.
                     track.user_name = track.user.username;
+                    track.user_avatar_url = track.user.avatar_url;
                     delete track.user;
                     // If we keep the id field we can only have a track once per
                     // playlist, which is not so good. So let's rename it.
@@ -228,6 +244,7 @@ define([
     });
 
     return {
+        User: User,
         Track: Track,
         Tracks: Tracks,
         Playlist: Playlist,

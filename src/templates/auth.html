@@ -1,0 +1,28 @@
+<% if (user_id) { %>
+
+
+  <div class="user"
+     <% if (avatar_url) { %>
+     style="background-image: url(<%= avatar_url %>)"
+     <% } %>
+  >
+    <a href="<%= permalink_url %>">
+      <%= username %>
+    </a>
+
+    <button class="logout css3button small">
+      Log out
+    </button>
+
+  </div>
+
+
+
+<% } else { %>
+
+  <button class="login css3button"
+          title="You cannot play non-public tracks without being loggd in">
+    Log in
+  </button>
+
+<% } %>

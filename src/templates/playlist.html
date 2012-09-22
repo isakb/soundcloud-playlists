@@ -1,14 +1,16 @@
 <!-- Playlist template -->
 
 <div class="meta" title="Click to edit playlist details">
-  <h3><%= name %></h3>
-  <%= description %>
+  <h3 class="name"><%= name %></h3>
+  <span class="description"><%= description %></span>
+  <span class="details">
+    <%= tracks.length %> tracks
+        (<%= formatShortTime(duration) %>)</span>
 </div>
 
 <table class="tracks">
   <thead>
     <tr>
-      <th><!-- picture column --></th>
       <th>Track</th>
       <th>User</th>
       <th>Length</th>
@@ -19,16 +21,9 @@
   <tbody>
   <% _.each(tracks, function(track, index) { %>
   <tr data-track-index="<%= index %>">
-    <td class="pic">
-      <% if (track.artwork_url) { %>
-        <img class="small" title="Play" src="<%= track.artwork_url %>" alt="" />
-      <% } else { %>
-        ► <!-- placeholder for a Play icon. -->
-      <% } %>
-    </td>
     <td><%= track.title %></td>
     <td><%= track.user_name %></td>
-    <td><%= formatDuration(track.duration) %></td>
+    <td><%= formatShortTime(track.duration) %></td>
     <td class="actions"><span class="small css3button delete" title="Delete">x</span></td>
   </tr>
   <% }); %>
@@ -36,25 +31,13 @@
 
   <tfoot>
     <tr>
-      <td colspan="3">
-        Number of tracks: <%= tracks.length %>
-      </td>
       <td colspan="2">
-        <%= formatDuration(duration) %>
+        <%= tracks.length %> tracks
       </td>
+      <td>
+        <%= formatShortTime(duration) %>
+      </td>
+      <td></td>
     </tr>
   </tfoot>
 </table>
-
-
-<form class="add-track">
-
-  <div class="add-to-playlist">
-    <input name="new_track"
-           title="Enter a URL of a track and press ENTER"
-           placeholder="http://soundcloud.com/author/song">
-
-    <button class="css3button">Add to playlist</button>
-  </div>
-
-</form>

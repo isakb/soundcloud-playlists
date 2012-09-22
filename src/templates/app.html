@@ -1,18 +1,27 @@
 <div id="wrapper">
 
+  <div id="auth"></div>
+
   <section id="main">
-    <div id="sc-player"></div>
+    <div id="player"></div>
     <div id="playlist"></div>
+    <div id="playlist-add-track"></div>
   </section>
 
-  <nav id="playlists"></nav>
+  <aside>
+
+    <nav id="playlists"></nav>
+
+    <div class="bottom">
+
+        <div class="links">
+
+          © 2012 <a href="https://github.com/isakb">Isak Bakken</a>
+
+        </div>
+
+    </div>
+
+  </aside>
 
 </div>
-
-<footer>
-  <strong>Bookmarklet:</strong>
-  To quickly add Soundcloud tracks to your active playlist, drag-and-drop this link to your Bookmarks Bar:
-  <a href="javascript:(function(s){window.__scPlaylistsAppUrl='<%= appUrl %>';s=document.createElement('SCRIPT');s.type='text/javascript';s.src='<%= bookmarkletUrl %>?'+Math.random();document.getElementsByTagName('head')[0].appendChild(s);})()">Add to Playlist!</a>.
-
-  When you have done this, simply click on the "Add to Playlist!" bookmark from any Soundcloud track's page.
-</footer>

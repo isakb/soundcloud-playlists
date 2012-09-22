@@ -73,8 +73,8 @@ td { vertical-align: top; }
     font-size: large;
     color: white;
     text-shadow: 0 1px 5px #999;
-    margin: 4px 0 10px 10px;
-    padding: 0;
+    margin: 0;
+    padding: 0 0 0 5px;
   }
   h3 {
     margin: 0;
@@ -86,10 +86,11 @@ td { vertical-align: top; }
     display: table;
     width: 100%;
     height: 100%;
-    padding-bottom: 20px;
   }
 
-  nav {
+  aside {
+    position: relative;
+    height: 100%;
     width: 200px;
     background-color: #ddd;
     display: table-cell;
@@ -98,11 +99,144 @@ td { vertical-align: top; }
     padding: 0;
   }
 
+  aside .bottom {
+    font: arial;
+    color: #888;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    font-size: x-small;
+    padding: 0;
+    margin: 0;
+    background-color: #e5e5e5;
+  }
+
+  .links {
+    text-align: right;
+    padding: 5px;
+  }
+
+  .links a:link,
+  .links a:visited {
+    color: #777;
+    text-decoration: none;
+    background-color: #eee;
+    border-radius: 3px;
+    padding: 2px;
+
+  }
+
+  #auth {
+    font-size: 10px;
+    z-index: 1;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: 64px;
+    width: 64px;
+  }
+  #auth > button {
+    position: absolute;
+    top: 5px;
+  }
+  #auth .user {
+    border-radius: 4px;
+    position: relative;
+    text-align: center;
+    width: 64px;
+    height: 64px;
+    color: #eee;
+    font-size: 11px;
+    text-shadow: 0 1px 2px black;
+  }
+  #auth .user a:link,
+  #auth .user a:visited {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  #auth .user .logout {
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+  }
+
   #main {
+    position: relative;
     display: table-cell;
     vertical-align: top;
     text-align: left;
-    background-color: #999;
+    background-color: #eee;
+  }
+
+  #player {
+    background-color: #f5f5f5;
+  }
+  #player .info .artwork {
+    width: 64px;
+    height: 64px;
+    opacity: 0.5;
+  }
+  #player .info .title {
+    position: absolute;
+    color: #666;
+    text-shadow: 0 2px 3px #ccc;
+    font-size: 28px;
+    top: 5px;
+    left: 69px;
+  }
+  #player .info .username {
+    position: absolute;
+    color: #999;
+    font-size: 12px;
+    top: 46px;
+    left: 69px;
+  }
+
+  #player .interactive {
+    background-color: #eee;
+    width: 100%;
+
+  }
+
+  #player .slider {
+    min-width: 200px;
+  }
+
+  #player .cell {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  #player .buttons {
+    /*width: 132px;*/
+    position: absolute;
+    top: 16px;
+    left: 16px;
+  }
+
+
+  #player .buttons button.play {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: black;
+    padding: 4px 6px;
+    background-color: #ccc;
+    border-radius: 19px;
+    border: 2px solid black;
+    box-shadow: 0px 2px 6px 2px #999;
+  }
+  #player .buttons button.play:disabled {
+    color: #999;
+    padding: 4px 6px;
+    background-color: #eee;
+    border-color: #999;
+    box-shadow: none;
+  }
+  #player .buttons button.play.playing {
+    color: #ff5a05;
+    background-color: white;
+    border-color: #ff5a05;
   }
 
   #playlist {
@@ -114,17 +248,47 @@ td { vertical-align: top; }
     }
 
     #playlist .meta {
+      position: relative;
       cursor: pointer;
-      background-color: #555;
-      padding: 10px;
-      color: white;
-      border-radius: 5px 5px 0 0;
+      padding: 5px;
+      color: black;
+      display: table;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    #playlist .meta h3 {
+      font-size: 16px;
+      font-weight: normal;
+      color: #444;
+      text-shadow: 0 -1px 2px #fff, 0 2px 3px #999;
+
+      vertical-align: top;
+      display: table-cell;
+      margin: 0;
+      padding: 0;
+    }
+    #playlist .meta span.description {
+      vertical-align: top;
+      text-align: right;
+      margin: 0;
+      padding: 0 5px 0 5px;
+      width: 50%;
+      display: table-cell;
+      font-size: 10px;
+      color: #999;
+    }
+    #playlist .meta span.details {
+      position: absolute;
+      left: 5px;
+      bottom: -16px;
+      font-size: 10px;
+      color: #aaa;
     }
 
     #playlist .meta-edit {
       border-radius: 5px;
       padding: 5px 10px 5px 10px;
-      background-color: #f0f0fe;
+      background-color: #bbb;
     }
     #playlist .meta-edit input,
     #playlist .meta-edit textarea {
@@ -142,24 +306,26 @@ td { vertical-align: top; }
       width: 100%;
       background-color: #eee;
       color: #666;
+      font-size: 11px;
     }
-    #playlist table th:nth-child(1) {
-      width: 32px;
+    #playlist table th:nth-child(2) {
+      width: 100px;
     }
     #playlist table th:nth-child(3) {
-      width: 120px;
+      width: 35px;
     }
     #playlist table th:nth-child(4) {
-      width: 50px;
-    }
-    #playlist table th:nth-child(5) {
       width: 20px;
     }
-    #playlist table tbody tr td:nth-child(4) {
+    #playlist table tbody tr td:nth-child(3) {
       font-size: 10px;
     }
     #playlist table thead {
-      background-color: black;
+      font-size: 10px;
+      font-weight: bold;
+      background-color: #ccc;
+      color: #888;
+      visibility: hidden;
     }
 
     #playlist tbody tr {
@@ -179,7 +345,6 @@ td { vertical-align: top; }
     #playlist tbody tr.active {
       background-color: #ff5a05;
       color: white;
-      text-shadow: 0 -1px 1px black;
     }
 
     #playlist tbody tr .pic {
@@ -201,6 +366,8 @@ td { vertical-align: top; }
       padding: 5px;
     }
     #playlist tfoot {
+      display: none;
+      font-size: 10px;
       font-weight: bold;
       background-color: #ddd;
       color: #888;
@@ -209,19 +376,40 @@ td { vertical-align: top; }
       padding-top: 10px;
     }
 
-  footer {
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    padding: 10px;
-    font-size: x-small;
-    background-color: #ddd;
-    color: gray;
-    box-shadow: inset 0px 3px 2px #999;
+  #playlist-add-track {
+    margin: 0;
+    padding: 0;
   }
-  footer a:link {
-    color: #69c;
-    font-weight: bold;
+
+  #playlist-add-track form {
+    width: 100%;
+    position: relative;
+    display: table;
+    padding: 5px;
+  }
+
+  #playlist-add-track .input {
+    display: table-cell;
+  }
+  #playlist-add-track .input input{
+    min-width: 100px;
+    width: 100%;
+  }
+  #playlist-add-track .button {
+    text-align: right;
+    display: table-cell;
+    width: 150px;
+    padding-right: 15px;
+  }
+  #playlist-add-track .submit:link {
+    display: inline-block;
+    text-decoration:none;
+    width: 100px;
+    text-align: center;
+  }
+  #playlist-add-track .submit:link:hover {
+    text-decoration:none;
+    color: white;
   }
 
   label {
@@ -232,36 +420,22 @@ td { vertical-align: top; }
   }
 
  .css3button {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
     color: #ffffff;
     padding: 4px 10px;
-    background: black;
-    background: -moz-linear-gradient(
-      top,
-      #000000 0%,
-      #a8a8a8);
-    background: -webkit-gradient(
-      linear, left top, left bottom,
-      from(#000000),
-      to(#a8a8a8));
+    background-color: #668;
     border-radius: 19px;
-    -moz-border-radius: 19px;
-    -webkit-border-radius: 19px;
     border: 2px solid #ffffff;
-    -moz-box-shadow:
-      0px 1px 3px rgba(000,000,000,0.5),
-      inset 0px 0px 1px rgba(255,255,255,0.7);
-    -webkit-box-shadow:
-      0px 1px 3px rgba(000,000,000,0.5),
-      inset 0px 0px 1px rgba(255,255,255,0.7);
-    text-shadow:
-      0px -1px 0px rgba(000,000,000,0.2),
-      0px 1px 0px rgba(255,255,255,0.3);
+    box-shadow:
+      0px 1px 3px #999;
+  }
+  .css3button:hover {
+    background-color: #66f;
+    box-shadow:;
+      0px 1px 3px #000,
+      inset 0px 0px 1px #fff;
   }
   .small.css3button {
     font-size: xx-small;
-    background: gray;
     padding: 4px 7px;
   }
 
@@ -271,17 +445,19 @@ td { vertical-align: top; }
     padding: 4px 10px;
     border: 1px solid silver;
     border-radius: 10px;
-    min-width: 300px;
   }
 
-  input:focus,
+  form input:focus,
   textarea:focus,
   #playlist .meta-edit input:focus,
   #playlist .meta-edit textarea:focus {
     box-shadow: 0 0 10px 3px #00f;
   }
 
+
   #playlists .new-playlist {
+    font-size: 10px;
+    width: 80px;
     background-color: #ccc;
     border-radius: 5px;
     margin: 10px;
@@ -296,11 +472,14 @@ td { vertical-align: top; }
     background-color: #555;
     cursor: pointer;
   }
+  #playlists > ul {
+    position: absolute;
+    top: 80px;
+    width: 100%;
+  }
 
   #playlists li {
-    margin-left: 10px;
     padding: 2px 5px;
-    margin: 0;
     color: #444;
   }
 
@@ -331,12 +510,6 @@ td { vertical-align: top; }
   .align-right {
     float: right;
     clear: both;
-  }
-
-  .add-to-playlist {
-    padding: 10px;
-    background-color: silver;
-    border-radius: 0 0 5px 5px;
   }
 
   .glow {

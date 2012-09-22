@@ -6,6 +6,7 @@ define([
     'jquery',
     'backbone',
     '../events',
+    '../helpers/sc_client',
     '../models/models',
     '../helpers/template_helpers',
     'text!../templates/playlist.html',
@@ -15,6 +16,7 @@ define([
     $,
     Backbone,
     EventHub,
+    SC,
     models,
     templateHelpers,
     playlistTemplate,
@@ -30,12 +32,11 @@ define([
         editTemplate:   _.template(editPlaylistTemplate),
 
         events: {
+            'submit form':              'onEditPlaylist',
             'click .meta':              'onClickMeta',
             'click tbody tr':           'onClickTrack',
             'click .abort':             'onClickAbort',
-            'click .delete':            'onClickDeleteTrack',
-            'submit form.edit-meta':    'onEditPlaylist',
-            'submit form.add-track':    'onAddTrack'
+            'click .delete':            'onClickDeleteTrack'
         },
 
         initialize: function() {
@@ -48,9 +49,6 @@ define([
             this.model.on('change', this.render);
             this.tracks = this.model.tracks;
             this.tracks.on('add remove', this.render);
-            this.tracks.on('add', function() {
-                EventHub.trigger('playlist:track-added');
-            });
         },
 
         destroyModelBindings: function() {
@@ -97,41 +95,6 @@ define([
             return this;
         },
 
-        // when user fills in a track URL and submits the form
-        onAddTrack: function(e) {
-            var url, $trackUrl;
-
-            e.preventDefault();
-
-            $trackUrl = this.$('form input[name=new_track]');
-            url = $trackUrl.val();
-            if (! /https?:\/\/.+/.test(url)) {
-                $trackUrl
-                    .val('Please enter the URL of the track here!')
-                    .select();
-
-                return;
-            } else {
-                this.addTrackFromUrl(url);
-            }
-            this.render();
-        },
-
-        /**
-         * Add a track from a typical Soundcloud track URL, e.g.:
-         * http://soundcloud.com/isakba/mahadatest6
-         *
-         * @param {String} trackUrl
-         */
-        addTrackFromUrl: function(trackUrl) {
-            this.model.addTrackFromUrl(trackUrl)
-            .done(function(track){
-                // console.log('Added track: %s to playlist', track.get('title'));
-            })
-            .fail(function(error) {
-                window.alert('Sorry! Not a valid track URL: ' + trackUrl);
-            });
-        },
 
         // when user clicks on a track in the playlist
         onClickTrack: function(e) {
