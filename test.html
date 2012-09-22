@@ -47,8 +47,16 @@
 
         describe('The app itself', function() {
 
-          it('should display a player', function() {
-            assert($('.player:visible').length).equals(1);
+          before(function() {
+            window.localStorage.clear();
+          });
+
+          after(function() {
+            window.localStorage.clear();
+          });
+
+          it('should not display a player before any track has been added', function() {
+            assert($('.player:visible').length).equals(0);
           });
 
           it('should display a playlist', function() {
@@ -91,6 +99,9 @@
 
                 assert($('#playlist table tbody tr').text().replace(/\s+/g, ' '))
                 .equals(" Bravissimo [2001] isak-ba 6:11 x ");
+
+                // Player visible
+                assert($('.player:visible').length).equals(1);
 
               }, 1000);
 
