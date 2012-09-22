@@ -15,50 +15,40 @@ task("default", [], function() {
 desc('Install all dependencies');
 task("deps", function() {
     console.log("- Checking/Installing dependencies ...\n");
-    jake.exec(["npm install"], function() {}, {
+    jake.exec([
+        "npm install",
+        "git submodule update --init"
+    ], complete, {
         stdout: true,
         stderr: true
     });
-    jake.exec(["git submodule update --init"], function() {}, {
-        stdout: true,
-        stderr: true
-    });
-});
+}, {async: true});
 
 /**
  * Run unit tests from console.
  */
 desc('Run unit tests in phantomjs (first run jake:build and jake:server &)');
 task('test', [], function() {
-    jake.exec(["./vendor/qutest/run http://localhost:8888/test.html " + process.argv.slice(3)], function() {}, {
+    jake.exec([
+        "./vendor/qutest/run --show_details=true http://localhost:8888/test.html " + process.argv.slice(3)
+    ], complete, {
         stdout: true,
         stderr: true
     });
-});
-
-/**
- * JS Syntax check.
- */
-desc('Check JS syntax (JSHint check)');
-task("check", function() {
-    jake.exec(['node_modules/.bin/jshint --show-non-errors --config ./.jshintrc .'], function() {}, {
-        stdout: true,
-        stderr: true
-    });
-});
+}, {async: true});
 
 /**
  * Start the static file server.
  */
 desc('Start static file server');
 task('server', function() {
-
-    jake.exec(["node ./bin/server.js 8888"], function() {}, {
+    jake.exec([
+        "node ./bin/server.js 8888"
+    ], complete, {
         stdout: true,
         stderr: true
     });
-
-});
+}, {async: true});
 
 /**
  * Building + optimizing code using r.js.
@@ -66,26 +56,35 @@ task('server', function() {
 desc('Build optimized code using r.js');
 task('build', ['clean'], function() {
     console.log('Building optimized code');
-    jake.exec(["node node_modules/requirejs/bin/r.js -o bin/build.js",
-                "mv build/index_prod.html build/index.html",
-                // Let's just remove a bunch of unnecessary files from build:
-                "find build/* -type d | xargs rm -rf"], function() {}, {
+    jake.exec([
+        "coco -bc $(find src -name '*.coco')",
+        "node node_modules/requirejs/bin/r.js -o bin/build.js",
+        "mv build/index_prod.html build/index.html",
+
+        // Remove a bunch of unnecessary files from build:
+        "find build/* -type d | xargs rm -rf",
+        "find build/ -name '*.coco' -delete"
+    ], function() {
+        console.log("Built files are found in the ./build folder");
+        complete();
+    }, {
         stdout: true,
         stderr: true,
         breakOnError: true
-    }, function() {
-        console.log("Built files are found in the ./build folder");
     });
-});
+}, {async: true});
 
 /**
- * Clean build.
+ * Clean up after build.
  */
-desc("Clean build directory");
+desc("Clean up after build");
 task('clean', [], function() {
-    console.log("- Removing './build' directory");
-    jake.exec(["rm -rf ./build/"]);
-});
+    console.log("- Removing './build' directory and built .js files.");
+    jake.exec([
+        "rm -rf ./build/",
+        "find src/ -name '*.js' -delete"
+    ], complete);
+}, {async: true});
 
 /**
  * Deploy relevant build files to the cloud
