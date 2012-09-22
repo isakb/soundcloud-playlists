@@ -8,7 +8,7 @@
     "node": "0.6.x"
   },
   "scripts": {
-    "test": "nohup jake server ; jake build test"
+    "test": "jake build test"
   },
   "dependencies": {
     "underscore": "1.x.x",

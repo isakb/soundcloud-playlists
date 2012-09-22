@@ -30,7 +30,7 @@ task("deps", function() {
 desc('Run unit tests in phantomjs (first run jake:build and jake:server &)');
 task('test', [], function() {
     jake.exec([
-        "./vendor/qutest/run --show_details=true http://localhost:8888/test.html " + process.argv.slice(3)
+        "./vendor/qutest/run --show_details=true file://`pwd`/test.html " + process.argv.slice(3)
     ], complete, {
         stdout: true,
         stderr: true
