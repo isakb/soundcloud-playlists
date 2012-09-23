@@ -57,13 +57,13 @@ desc('Build optimized code using r.js');
 task('build', ['clean'], function() {
     console.log('Building optimized code');
     jake.exec([
-        "coco -bc $(find src -name '*.coco')",
+        "coco -bc $(find src -name '*.co')",
         "node node_modules/requirejs/bin/r.js -o bin/build.js",
         "mv build/index_prod.html build/index.html",
 
         // Remove a bunch of unnecessary files from build:
         "find build/* -type d | xargs rm -rf",
-        "find build/ -name '*.coco' -delete"
+        "find build/ -name '*.co' -delete"
     ], function() {
         console.log("Built files are found in the ./build folder");
         complete();
