@@ -67,10 +67,11 @@ Backbone.View.extend do
     # a whole playlist...
     @player = new PlayerView do
       model: playlist
-      widgetParams:
-        auto_play: true
-        show_user: true
-        sharing: false        # FB sharing code throws annoying errors.
+      widgetParams: {
+        +auto_play
+        +show_user
+        -sharing        # FB sharing code throws annoying errors.
+      }
     @player.render!
 
 
