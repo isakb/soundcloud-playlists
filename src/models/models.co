@@ -58,7 +58,7 @@ Playlist = Backbone.Model.extend do
       name = @get \name
       while @collection.where(name: @get \name).length
         count += 1
-        @set \name, "#{name} (#{count})", silent: true
+        @set \name, "#name (#count)", {+silent}
       @save!
 
     @tracks = new Tracks!
@@ -106,9 +106,7 @@ Playlist = Backbone.Model.extend do
   addTrackFromUrl: (url) ->
     url = "http://soundcloud.com#{url}" unless /^https?:/.test url
     dfd = $.Deferred!
-    SC.get "/resolve",
-      url: url
-    , (track, error) ~>
+    SC.get "/resolve", {url}, (track, error) ~>
       dfd.reject error  if error
       if track.kind is \track
         track.user_name = track.user.username
@@ -129,18 +127,15 @@ Playlist = Backbone.Model.extend do
   addTrackByID: (id) ->
     dfd = $.Deferred!
     SC.get "/resolve",
-      url: "http://api.soundcloud.com/tracks/#{id}"
+      url: "http://api.soundcloud.com/tracks/#id"
     , (track, error) ~>
       dfd.reject error  if error
       if track.kind is \track
-        track.user_name = track.user.username
-        track.user_avatar_url = track.user.avatar_url
-        delete track.user
+        track{username: user_name, avatar_url: user_avatar_url} = delete track.user
 
         # If we keep the id field we can only have a track once per
         # playlist, which is not so good. So let's rename it.
-        track.sc_id = track.id
-        delete track.id
+        track.sc_id = delete track.id
 
         dfd.resolve @tracks.create(track)
       else
@@ -164,8 +159,4 @@ Playlists = Backbone.Collection.extend do
     @trigger "playlists:activate", newPlaylist
 
 
-User: User
-Track: Track
-Tracks: Tracks
-Playlist: Playlist
-Playlists: Playlists
+{User, Track, Tracks, Playlist, Playlists}

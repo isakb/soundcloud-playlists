@@ -20,11 +20,11 @@ let window = @
     tracks = $ '.player[data-sc-track]:visible' .map ->
       @getAttribute \data-sc-track
 
-    die 'No tracks found on this page.'  unless tracks?.length
+    die 'No tracks found on this page.'  unless tracks?length
 
     # A reference to the popup window prevents us from opening a new popup
     # #every time the user clicks on the bookmarklet.
-    appWindow = open appUrl + '?' + $.param(tracks: tracks), 'scPlaylistsApp', 'left=20,top=20,width=600,height=600,toolbar=1,resizable=1'
+    appWindow = open appUrl + '?' + $.param({tracks} 'scPlaylistsApp' 'left=20,top=20,width=600,height=600,toolbar=1,resizable=1'
     appWindow.focus!
 
   catch e
