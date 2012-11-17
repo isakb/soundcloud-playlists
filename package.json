@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "underscore": "1.x.x",
-    "requirejs": "2.0.x",
-    "node-minify": "0.4.x",
+    "requirejs": "2.1.x",
+    "node-minify": "0.6.x",
     "cloudfiles": "0.3.x",
     "LiveScript": "~1.1.0"
   }
