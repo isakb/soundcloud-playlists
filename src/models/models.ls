@@ -105,11 +105,14 @@ Playlist = Backbone.Model.extend do
     SC.get "/resolve", {url: url}, (track, error) ~>
       return dfd.reject error  if error
       switch track.kind
-      | \track => dfd.resolve @makeTrack track
-      | \user  => dfd.pipe @addTracksByUser track
-      |_       => dfd.reject do
-                   message: "This URL does not go to a public soundcloud track.
-                             Log in if you were trying to add a private track."
+      | \track        => dfd.resolve @makeTrack track
+      | \user         => dfd.pipe @addTracksByUser track
+      | \playlist     => dfd.resolve [@makeTrack(track) for track in track.tracks]
+      |_              =>
+        console.error track
+        dfd.reject do
+         message: "This (#{url}) is no public soundcloud track.
+                   Log in if you were trying to add a private track."
     dfd.promise!
 
 

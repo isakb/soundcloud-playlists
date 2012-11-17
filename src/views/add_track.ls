@@ -25,10 +25,11 @@ Backbone.View.extend do
     try
       parts = location.search.slice(1).split("&")
       tracks = _.map parts, (part) ~>
-        url = part.match(/^track[^=]*=(\d+)/)[1]
+        url = decodeURIComponent(part.match(/^track[^=]*=([^$]+)/)[1])
+        url
 
-      for id of tracks
-        _.defer @addTrackByID, id
+      for index, str of tracks
+        _.delay @addAnything, index * 10, str
 
   changeModel: (@model) ->
 
@@ -76,7 +77,7 @@ Backbone.View.extend do
   # or just "isakba" to add all of isakba's tracks.
   addAnything: (str) ->
     # TODO: Use the search API.
-    url = 'http://soundcloud.com' + ('/' unless str[0] == '/') + str
+    url = 'http://soundcloud.com' + (if str[0] == '/' then '' else '/') + str
     @model.addTrackFromUrl url
       .done (tracks) -> for t in tracks then EventHub.trigger "add-track-form:track-added", t
       .fail (error)  -> window.alert "Sorry! Couldn't add track(s) from #{str}"
