@@ -8,7 +8,7 @@
     "node": "~0.8.12"
   },
   "scripts": {
-    "test": "slake build test",
+    "test": "slake build && slake test",
     "start": "slake deps server"
   },
   "dependencies": {
