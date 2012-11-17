@@ -24,4 +24,4 @@ formatShortTime: (ms) ->
   x = ms / 1000
   s = x % 60
   m = x / 60
-  [m | 0, pad(s | 0)].join ":"
+  [m .|. 0, pad(s .|. 0)].join ":"

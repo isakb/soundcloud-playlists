@@ -1,21 +1,21 @@
 {
   "name": "soundcloud-playlists",
   "description": "Soundcloud Playlists, create playlist of Soundcloud tracks",
-  "version": "0.1.1-coco",
+  "version": "0.2.0-ls",
   "private": true,
   "author": "Isak Bakken <isak@klarna.com>",
   "engines": {
-    "node": "0.6.x"
+    "node": "~0.8.12"
   },
   "scripts": {
-    "test": "jake build test"
+    "test": "slake build test",
+    "start": "slake deps server"
   },
   "dependencies": {
     "underscore": "1.x.x",
     "requirejs": "2.0.x",
     "node-minify": "0.4.x",
     "cloudfiles": "0.3.x",
-    "coco": "~0.7.2",
-    "jake": "~0.3.16"
+    "LiveScript": "~1.1.0"
   }
 }

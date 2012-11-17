@@ -105,7 +105,7 @@ Backbone.View.extend do
   whileSoundPlaying: ->
     # only update current location 10 times per second
     ms = @sound.position
-    tenthSeconds = (ms / 100) | 0
+    tenthSeconds = (ms / 100) .|. 0
     if tenthSeconds != @_lastTenthSeconds
       @$slider.val ms
       @$currentTime.text templateHelpers.formatShortTime ms
