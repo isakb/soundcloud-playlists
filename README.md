@@ -21,18 +21,18 @@ Dependencies
 You should in theory be able to simply open the index.html file and use the app
 like that (except for problems that occur when using the file: protocol).
 
-For developing you need to have node.js > 0.6 and npm.
+For developing you need to have node.js > 0.8 and npm.
 
-Then you only have to run `npm install && jake deps` in order to get everything you need.
+Then you only have to run `npm install && slake deps` in order to get everything you need.
 
-Typing `jake -T` will list the tasks available.
-Typing `jake deploy` should deploy the project into the cloud.
+Typing `slake` will list the tasks available.
+Typing `slake deploy` should deploy the project into the cloud.
 
 
 Tech used
 =========
 - Soundcloud's JS SDK.
-- JavaScript, Coco, HTML5, CSS3.
+- LiveScript, HTML5, CSS3.
 - Backbone.js for the bulk of the app.
 - Backbone.Localstorage for storing playlists in the browser.
 - HTML5 boilerplate's CSS.
@@ -45,7 +45,6 @@ Tech used
 TODO
 ====
 
-- Make a LiveScript version.
 - Update the temporary demo which is not the newest version.
 
 

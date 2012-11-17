@@ -77,7 +77,7 @@ Playlist = Backbone.Model.extend do
 
 
   getActiveTrack: ->
-    @tracks.at(@activeTrackIndex) or @getNextTrack!
+    @tracks.at(@activeTrackIndex) || @getNextTrack!
 
 
   # Get next active track (currently assuming that playlist will be repeated).
@@ -85,7 +85,7 @@ Playlist = Backbone.Model.extend do
   getNextTrack: ->
     nextIndex = (@activeTrackIndex + 1) % @tracks.length
     @activeTrackIndex = nextIndex
-    @tracks.at(nextIndex) or @tracks.at(0)
+    @tracks.at(nextIndex) || @tracks.at(0)
 
 
   # Refresh the playlist after something has changed.
@@ -100,47 +100,53 @@ Playlist = Backbone.Model.extend do
   # on a Soundcloud track link on Soundcloud.
   #
   # Example url: http://soundcloud.com/isakba/bravissimo-2001
-  #
-  # Our playlist cannot handle this URL out of the box, since we need
-  # the unique track ID for the player.
   addTrackFromUrl: (url) ->
-    url = "http://soundcloud.com#{url}" unless /^https?:/.test url
     dfd = $.Deferred!
-    SC.get "/resolve", {url}, (track, error) ~>
-      dfd.reject error  if error
-      if track.kind is \track
-        track.user_name = track.user.username
-        track.user_avatar_url = track.user.avatar_url
-        delete track.user
-
-        # If we keep the id field we can only have a track once per
-        # playlist, which is not so good. So let's rename it.
-        track.sc_id = track.id
-        delete track.id
-
-        dfd.resolve @tracks.create(track)
-      else
-        dfd.reject message: "This URL does not go to a public soundcloud track.
-                             Log in if you were trying to add a private track."
+    SC.get "/resolve", {url: url}, (track, error) ~>
+      return dfd.reject error  if error
+      switch track.kind
+      | \track        => dfd.resolve @makeTrack track
+      | \user         => dfd.pipe @addTracksByUser track
+      | \playlist     => dfd.resolve [@makeTrack(track) for track in track.tracks]
+      |_              =>
+        console.error track
+        dfd.reject do
+         message: "This (#{url}) is no public soundcloud track.
+                   Log in if you were trying to add a private track."
     dfd.promise!
+
+
+  # Add a user's tracks (all of them).
+  addTracksByUser: (user) ->
+    dfd = $.Deferred!
+    SC.get "/users/#{user.id}/tracks", (tracks, error) ~>
+      return dfd.reject error  if error
+      dfd.resolve [@makeTrack(track) for track in tracks]
+    dfd.promise!
+
 
   addTrackByID: (id) ->
     dfd = $.Deferred!
-    SC.get "/resolve",
-      url: "http://api.soundcloud.com/tracks/#id"
-    , (track, error) ~>
-      dfd.reject error  if error
-      if track.kind is \track
-        track{username: user_name, avatar_url: user_avatar_url} = delete track.user
-
-        # If we keep the id field we can only have a track once per
-        # playlist, which is not so good. So let's rename it.
-        track.sc_id = delete track.id
-
-        dfd.resolve @tracks.create(track)
+    SC.get "/tracks/#id", (track, error) ~>
+      return dfd.reject error  if error
+      addedTrack = @makeTrack track
+      if addedTrack
+        dfd.resolve addedTrack
       else
         dfd.reject message: "This URL does not go to a soundcloud track."
     dfd.promise!
+
+
+  # (Maybe) make a playlist track from the SC track data received by API.
+  makeTrack: (track) ->
+    if track.kind is \track
+      track{username: user_name, avatar_url: user_avatar_url} = delete track.user
+      # If we keep the id field we can only have a track once per
+      # playlist, which is not so good. So let's rename it.
+      track.sc_id = delete track.id
+      @tracks.create(track)
+    else
+      null
 
 
 # A collection of Playlists.
