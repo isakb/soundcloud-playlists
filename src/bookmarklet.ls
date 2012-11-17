@@ -9,7 +9,7 @@ let window = @
     throw new Error msg
 
   try
-    $ = window.$
+    $ = window.jQuery
 
     die 'You can only run this bookmarklet on Soundcloud pages.'  unless $
 
@@ -17,10 +17,11 @@ let window = @
     appUrl = window.__scPlaylistsAppUrl
 
     # All the tracks (IDs) that we find on the page.
-    tracks = $ '.player[data-sc-track]:visible' .map ->
-      @getAttribute \data-sc-track
+    urls = $ '.sc-link-dark.soundTitle__title' .map ->
+      $ @ .attr \href
 
-    die 'No tracks found on this page.'  unless tracks?length
+    tracks = urls.toArray!
+    tracks.unshift window.location.href.split('soundcloud.com/')[1]
 
     # A reference to the popup window prevents us from opening a new popup
     # #every time the user clicks on the bookmarklet.

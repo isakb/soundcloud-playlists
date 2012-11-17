@@ -25,10 +25,11 @@ Backbone.View.extend do
     try
       parts = location.search.slice(1).split("&")
       tracks = _.map parts, (part) ~>
-        url = part.match(/^track[^=]*=(\d+)/)[1]
+        url = decodeURIComponent(part.match(/^track[^=]*=([^$]+)/)[1])
+        url
 
-      for id of tracks
-        _.defer @addTrackByID, id
+      for index, str of tracks
+        _.delay @addAnything, index * 10, str
 
   changeModel: (@model) ->
 
@@ -44,27 +45,40 @@ Backbone.View.extend do
   onAddTrack: (e) ->
     e.preventDefault!
 
-    $trackUrl = @$ "form input[name=new_track]"
-    track = $trackUrl.val!
+    $search = @$ "form input[name=new_track]"
+    str = $search.val!
 
-    if /^\d+$/.test(track)
-      @addTrackByID +track
-    else if /^https?:\/\/.+/.test(track)
-      @addTrackFromUrl track
+    if /^\d+$/.test(str)
+      @addTrackByID +str
+    else if /^https?:\/\/.+/.test(str)
+      @addTrackFromUrl str
     else
-      $trackUrl.val "Enter the track's ID or URL" .select!
-      return
+      @addAnything str
+
     @render!
 
-  # Add a track from a typical Soundcloud track URL, e.g.:
-  # http://soundcloud.com/isakba/mahadatest6 or /isakba/mahdadatest6
-  addTrackFromUrl: (trackUrl) ->
-    trackUrl = "http://soundcloud.com#{trackUrl}"  if trackUrl.charAt(0) == "/"
-    @model.addTrackFromUrl trackUrl
-      .done (track) -> EventHub.trigger "add-track-form:track-added", track
-      .fail (error) -> window.alert "Sorry! Not a valid track URL: " + trackUrl
 
   addTrackByID: (trackID) ->
     @model.addTrackByID trackID
       .done (track) -> EventHub.trigger "add-track-form:track-added", track
       .fail (error) -> window.alert "Sorry! Not a valid track: " + trackID
+
+
+  # Add a track(s) from a typical Soundcloud track URL, e.g.:
+  # http://soundcloud.com/isakba/mahadatest6
+  addTrackFromUrl: (trackUrl) ->
+    @model.addTrackFromUrl trackUrl
+      .done (track) -> EventHub.trigger "add-track-form:track-added", track
+      .fail (error) -> window.alert "Sorry! Not a valid track URL: " + trackUrl
+
+
+  # Add track(s) from e.g.
+  # http://soundcloud.com/isakba/mahadatest6 or /isakba/mahdadatest6
+  # or just "isakba" to add all of isakba's tracks.
+  addAnything: (str) ->
+    # TODO: Use the search API.
+    url = 'http://soundcloud.com' + (if str[0] == '/' then '' else '/') + str
+    @model.addTrackFromUrl url
+      .done (tracks) -> for t in tracks then EventHub.trigger "add-track-form:track-added", t
+      .fail (error)  -> window.alert "Sorry! Couldn't add track(s) from #{str}"
+
