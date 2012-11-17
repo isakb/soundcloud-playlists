@@ -64,7 +64,7 @@ Backbone.View.extend do
     tplVars = _.extend({}, @model.toJSON!,
       tracks: @tracks.toJSON!
     , templateHelpers)
-    html = (@overrideTemplate or @template) tplVars
+    html = (@overrideTemplate ? @template) tplVars
     @$el.html html
     activeElement = @$ ".tracks tr[data-track-index=#{@model.activeTrackIndex}]"
     activeElement.addClass \active
