@@ -51,7 +51,7 @@ Backbone.View.extend do
     if /^\d+$/.test(str)
       @addTrackByID +str
     else if /^https?:\/\/.+/.test(str)
-      @addFromUrl str
+      @addTrackFromUrl str
     else
       @addAnything str
 

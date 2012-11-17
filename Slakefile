@@ -7,9 +7,9 @@ require! {
 
 run = (name, ...args) ->
   child_process.spawn(name, args)
-    .stdout.on 'data', (buffer) -> log buffer  if buffer .= toString().trim()
-    .stderr.on 'data', (buffer) -> error buffer  if buffer .= toString().trim()
-    .on 'exit', (status) -> process.exit(1)  if status != 0
+    ..stdout.on 'data', (buffer) -> log buffer  if buffer .= toString().trim()
+    ..stderr.on 'data', (buffer) -> error buffer  if buffer .= toString().trim()
+    ..on 'exit', (status) -> process.exit(1)  if status != 0
 
 
 shell = (cmds, callback) ->
@@ -37,7 +37,7 @@ task "deps", "Install all dependencies", ->
 
 
 task "test", "Run unit tests in phantomjs (first run slake:build and slake:server &)", ->
-  run "./vendor/qutest/run", "--show_details=true", "file://`pwd`/test.html " + process.argv.slice(3)
+  run "./vendor/qutest/run", "--show_details=true", "file://#{__dirname}/test.html " + process.argv.slice(3)
 
 
 task "server", "Start static file server", ->
