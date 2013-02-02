@@ -4,7 +4,7 @@ Soundcloud Playlists [![Build Status](https://secure.travis-ci.org/isakb/soundcl
 A fully client-based web app that allows you to create playlists of any tracks
 on SoundCloud.
 
-[Try it!](http://8a1a4917cae4dc3e3052-b14a88eb431879ac4a1c6bdd56ea3819.r77.cf3.rackcdn.com/index.html)
+[Try it!](http://play.isakb.com/index.html)
 
 Features
 ========
